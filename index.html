@@ -78,7 +78,15 @@
   /* ── six behaviours ─────────────────────────────────────────────── */
   .behaviours { display:grid; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:1.75rem; }
   @media (min-width:34rem) { .behaviours { grid-template-columns:1fr 1fr; } }
-  @media (min-width:58rem) { .behaviours { grid-template-columns:repeat(3,1fr); } }
+  @media (min-width:50rem) { .behaviours { grid-template-columns:repeat(3,1fr); } }
+  /* Wide screens carry all six in a single horizontal strip. */
+  @media (min-width:72rem) {
+    .behaviours { grid-template-columns:repeat(6,1fr); }
+    .beh .body { padding:.7rem .75rem .9rem; }
+    .beh h3 { font-size:.9375rem; line-height:1.3; }
+    .beh p { font-size:.8125rem; line-height:1.45; }
+    .beh .chan { font-size:.5625rem; letter-spacing:.1em; }
+  }
   .beh { background:var(--panel); display:flex; flex-direction:column; }
   .beh img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
   .beh .body { padding:.8rem .95rem 1.05rem; border-top:3px solid var(--gold); flex:1;
