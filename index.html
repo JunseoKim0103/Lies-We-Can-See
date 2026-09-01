@@ -151,6 +151,12 @@
 
   /* ── taxonomy table ────────────────────────────────────────────── */
   .tax-wrap { overflow-x:auto; margin-top:1.5rem; border:1px solid var(--line); }
+  /* Wide data/mechanic tables scroll inside their own box on narrow screens
+     instead of pushing the page sideways. Desktop rendering is unchanged. */
+  .tscroll { overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; }
+  .tscroll > table.data { margin-top:0; }
+  .tscroll > table.mech { margin:1.5rem 0; }
+  .tscroll > table.data { min-width:36rem; }
   table.tax { width:100%; border-collapse:collapse; font-size:.875rem; }
   table.tax th, table.tax td { text-align:left; padding:.5rem .75rem; vertical-align:baseline; }
   table.tax thead th { font-family:var(--mono); font-size:.625rem; letter-spacing:.12em;
@@ -342,7 +348,7 @@
       agents on one shared map, six <em>crewmates</em> against two <em>imposters</em>
       hiding among them. A match alternates between two phases until one side wins.
     </p>
-    <table class="mech">
+    <div class="tscroll"><table class="mech">
       <tbody>
         <tr class="grp"><td colspan="2">The two phases</td></tr>
         <tr><th>Task phase</th><td>Everyone moves freely; no public chat. Crewmates work on
@@ -358,7 +364,7 @@
         <tr><th>Crewmates win</th><td>Both imposters are voted out, or every assigned
           mission is completed.</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p>
       Roles are hidden: crewmates never learn who the imposters are, while the two
       imposters know each other and can win only by deceiving everyone else.
@@ -559,7 +565,7 @@
         backbone.
       </p>
     </div>
-    <table class="data">
+    <div class="tscroll" style="margin-top:1.25rem"><table class="data">
       <thead><tr><th>Cell</th><th>Backbone (self-play)</th><th>Crewmate (memory, planning, refl-skill, prompt)</th><th>Imposter WR</th></tr></thead>
       <tbody>
         <tr><td class="num">1-1</td><td>Qwen3.6-27B</td><td class="num">(semantic, reactive, meeting-on, minimal)</td><td class="num">44%</td></tr>
@@ -567,7 +573,7 @@
         <tr><td class="num">2-1</td><td>GPT-4.1-mini</td><td class="num">(semantic, reactive, meeting-on, minimal)</td><td class="num">60%</td></tr>
         <tr><td class="num">2-2</td><td>GPT-4.1-mini</td><td class="num">(window, hierarchical, meeting-on, minimal)</td><td class="num">25%</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p class="figcap" style="margin-top:.6rem">
       Both roles run the same backbone (self-play). Each cell aggregates 16 imposter
       configurations × 3 repetitions = 48 matches.
@@ -609,7 +615,7 @@
         "non-verbal" atoms contribute more.
       </p>
     </div>
-    <table class="data">
+    <div class="tscroll" style="margin-top:1.25rem"><table class="data">
       <thead><tr><th>#</th><th>Atom</th><th>Name</th><th>Cluster</th><th>Count</th><th>r<sub>pb</sub></th></tr></thead>
       <tbody>
         <tr class="hl"><td class="num">1</td><td class="num">E</td><td>Witness-Aware Kill</td><td class="num">NV-2</td><td class="num">618</td><td class="num">+0.434</td></tr>
@@ -636,7 +642,7 @@
         <tr><td class="num">22</td><td class="num">W</td><td>Vote/Chat Inconsistency</td><td class="num">V-3</td><td class="num">24</td><td class="num">&minus;0.117</td></tr>
         <tr><td class="num">23</td><td class="num">U</td><td>Honesty/Credibility Marker</td><td class="num">V-2</td><td class="num">19</td><td class="num">&minus;0.139</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p class="figcap" style="margin-top:.6rem">
       Per-atom statistics over all 192 games: raw count and point-biserial correlation
       r<sub>pb</sub> between per-game atom count and the imposter-win indicator.
@@ -719,7 +725,7 @@
         purpose (B), or fleeing alongside the killer (G)).
       </p>
     </div>
-    <table class="data">
+    <div class="tscroll" style="margin-top:1.25rem"><table class="data">
       <thead><tr><th>Atom</th><th>Name</th><th>Cluster</th><th>r</th><th>top-3</th><th>worst-3</th><th>×</th></tr></thead>
       <tbody>
         <tr class="grp"><td colspan="7">Winner atoms (positive r)</td></tr>
@@ -734,7 +740,7 @@
         <tr><td class="num">M</td><td>Counter-Accusation</td><td class="num">V-1</td><td class="num">&minus;0.52</td><td class="num">7.16</td><td class="num">7.57</td><td class="num">0.95×</td></tr>
         <tr><td class="num">U</td><td>Honesty/Credibility Marker</td><td class="num">V-2</td><td class="num">&minus;0.50</td><td class="num">0.05</td><td class="num">0.17</td><td class="num">0.29×</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p class="figcap" style="margin-top:.6rem">
       Atoms per game, averaged within each group; × is the top-3 to worst-3 ratio.
     </p>
@@ -751,7 +757,7 @@
         about as rarely as the losing models do.
       </p>
     </div>
-    <table class="data">
+    <div class="tscroll" style="margin-top:1.25rem"><table class="data">
       <thead><tr><th>Model</th><th>NV-1</th><th>NV-2</th><th>NV-3</th><th>V-1</th><th>V-2</th><th>V-3</th><th>Imposter WR</th></tr></thead>
       <tbody>
         <tr><td>Gemini-3-flash</td><td class="num"><strong>39.7</strong></td><td class="num">27.3</td><td class="num">2.9</td><td class="num">29.3</td><td class="num">0.4</td><td class="num">0.4</td><td class="num">70.8%</td></tr>
@@ -762,7 +768,7 @@
         <tr><td>Gemma4-26B-A4B</td><td class="num">29.2</td><td class="num">31.7</td><td class="num">1.6</td><td class="num">34.7</td><td class="num">0.3</td><td class="num">2.5</td><td class="num">36.5%</td></tr>
         <tr class="hl"><td><strong>r vs. Imposter WR</strong></td><td class="num"><strong>+0.54</strong></td><td class="num">&minus;0.37</td><td class="num">+0.44</td><td class="num">&minus;0.42</td><td class="num">&minus;0.52</td><td class="num">&minus;0.48</td><td class="num">&ndash;</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <p class="figcap" style="margin-top:.6rem">
       Per-model cluster shares (% of each VLM&rsquo;s atom budget) and cross-model Pearson
       r against imposter WR (N = 6). Bold marks each top-3 VLM&rsquo;s dominant channel.
