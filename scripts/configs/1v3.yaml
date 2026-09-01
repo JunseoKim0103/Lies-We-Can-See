@@ -1,0 +1,26 @@
+# 1 imposter vs 3 crewmates — the small configuration. A match finishes in a
+# fraction of the time and cost of 2 vs 6, which makes it the one to use when
+# smoke-testing a change to the harness.
+#
+#   python scripts/amongus_1_imposter_3_crewmates_Aria.py \
+#          --config scripts/configs/1v3.yaml
+
+task_id: amongus_1_imposter_3_crewmates
+
+agents:
+  - name: James
+    role: imposter
+    color: Red
+    model: gpt-4.1-mini
+  - name: Steve
+    role: crewmate
+    color: Blue
+    model: gpt-4.1-mini
+  - name: Jason
+    role: crewmate
+    color: Green
+    model: gpt-4.1-mini
+  - name: Michael
+    role: crewmate
+    color: Yellow
+    model: gpt-4.1-mini

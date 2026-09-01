@@ -1,0 +1,1512 @@
+#
+# Among Us task definitions
+# Free-play mode where agents run without explicit success conditions
+# You manage mission/goal logic directly in Minecraft
+#
+
+#
+# Among Us task definitions
+# Free-play mode where agents run without explicit success conditions
+# You manage mission/goal logic directly in Minecraft
+#
+
+amongus_2_imposter_6_crewmates:
+  goal: Achieve Role Victory
+  guidance: "
+    [Game Overview]
+    - This game consists of eight agents.
+    - Two agents are secretly assigned the role of Imposter.
+    - The remaining six agents are Crewmates.
+    - Roles are hidden and must not be revealed at any time.
+    - The total game time is limited.
+    - Each agent must fulfill their role within the given time limit.
+
+    [Win Conditions]
+
+    Crewmate Victory:
+    - All Imposters are expelled through voting, OR
+    - All required missions are successfully completed within the time limit.
+
+    Imposter Victory:
+    - Crewmates are eliminated through kills (with a 3600 TICK kill cooldown) or voting
+      until the number of surviving Crewmates is equal to or less than the number of surviving Imposters.
+
+    [Objectives]
+
+    Crewmate Objectives:
+    - Each Crewmate must complete their assigned missions.
+    - A total of 3 missions must be completed to win.
+    - Identify and expel BOTH Imposters through discussion and voting.
+
+    Imposter Objectives:
+    - Secretly eliminate Crewmates.
+    - Avoid suspicion by blending in with Crewmates.
+    - Coordinate with the other Imposter when possible without revealing the alliance to Crewmates.
+    - Prevent mission completion and gain numerical control.
+    - In your scoreboard, atk_ready being 0 means the kill cooldown is active, and 1 means attacking is allowed.
+
+    [Players Unique Colors]
+    - Each agent has a fixed, unique color associated with their identity:
+
+      - James   : Red
+      - Steve   : Blue
+      - Jason   : Green
+      - Michael : Yellow
+      - Olivia  : Pink
+      - Noah    : White
+      - Ethan   : Light Blue
+      - Martin  : Black
+
+    - These colors are used to identify players and dead bodies.
+    - A dead body is represented by a carpet matching the eliminated agent's color.
+
+
+    [Mission Rules]
+
+    ## General Rules
+    - Missions are located at fixed coordinates across the map.
+    - Each surviving Crewmate must complete their 3 assigned missions. The game triggers a Crew mission win only when every living Crewmate has finished all 3 of their assigned missions.
+    - Only Crewmates can complete missions.
+    - A mission is considered complete only when performed at the correct location.
+    - Imposters cannot complete missions but may pretend to do so.
+
+    ## Mission Interaction
+    - Each mission site contains an Emerald block(green block) with a stone button.
+    - To attempt a mission, approach the Emerald block(green block) and press the stone button.
+    - Press the button only once to start the mission.
+    - To complete the mission, press the button once and then wait for 1200 ticks.
+    - Do not mine a stone button.
+    - Mission coordinates are approximate, not exact.
+
+    ## Scoreboard-based Mission State
+    - The game uses Minecraft scoreboards to track mission completion.
+    - For each mission number X, there exists a scoreboard objective named `missionX` (e.g., `mission1`, `mission2`, `mission3`), which indicates that Mission X exists.
+    - The scoreboard value for `missionX` represents completion status:
+      - `0` = not completed yet
+      - `1` = completed
+    - Agents must directly read and use these scoreboard values (instead of relying only on chat messages) to determine mission availability and completion state.
+
+    ## Completion Conditions (Crewmates Only)
+    - Press the stone button once to start the mission attempt.
+    - Do not move until the mission is completed.
+    - Moving early cancels the attempt.
+    - Waiting for the full 1200 ticks completes the mission.
+
+    ## Positioning Guidelines
+    - Exact Y-coordinate matching is NOT required, but remain on the same floor (maintain approximately y = 65).
+    - Stay on the same floor/level at all times.
+    - Approach the button horizontally.
+    - Do NOT attempt to interact through walls; ensure there is a clear path to the button.
+    - The stone button is attached to a green block (emerald block).
+    - If the button does not activate, move slightly closer and try again.
+    - If the stone button is visible, the mission can be attempted.
+
+    [Mission Locations]
+    - The following coordinates represent possible mission locations (x, y, z).
+    - Only 3 missions must be completed to win.
+    - Assigned missions will be given when the game starts.
+
+    1. (81, 65, 65)
+    2. (101, 65, 89)
+    3. (107, 65, 125)
+    4. (118, 65, 114)
+    5. (106, 65, 94)
+    6. (123, 65, 62)
+    7. (97, 65, 39)
+    8. (91, 65, 116)
+    9. (97, 65, 125)
+    10. (107, 65, 87)
+    11. (119, 65, 82)
+    12. (111, 65, 79)
+    13. (102, 65, 35)
+    14. (98, 65, 61)
+    15. (86, 65, 56)
+    16. (81, 65, 55)
+    17. (106, 65, 60)
+    18. (127, 65, 73)
+    19. (114, 65, 51)
+    20. (126, 65, 67)
+
+    [Meetings and Voting]
+    ## Emergency Meeting
+    - A meeting may be called if suspicious behavior is observed.
+    - Press the button located on the command block at (87,65,76).
+    - The meeting button is disabled during:
+      - The first 2400 ticks after the game starts
+      - The first 1200 ticks after a meeting ends
+
+    ## In Meetings
+    - If the scoreboard value phase is 1, the meeting has started.
+    - Immediately stop all actions and participate in the meeting discussion.
+    - During the meeting, you may discuss and share your opinions with other players about who the imposters might be.
+    - The meeting lasts for a total of 6000 ticks.
+    - Crewmates must vote for the player they believe is an imposter during the meeting.
+    - Imposters must vote for the crewmate they want to eliminate.
+
+    ## Dead Body Report
+    - Any agent who discovers a dead body must report it immediately.
+    - A dead body is represented by a carpet matching the player's unique color.
+
+    ### How to Report a Dead Body
+    - Move within 2 blocks of the body.
+    - Select the item in slot 44.
+    - Right-click to report (use bot.activateItem()).
+
+    ## Voting Rules
+    - Vote for the player you believe is an Imposter.
+    - Imposters may vote to eject Crewmates.
+    - You may choose to skip if uncertain.
+    - When the scoreboard value meeting_1min becomes 1, it means that only 1200 ticks remain in the meeting, so you must quickly finalize your vote.
+
+    ### How to Vote
+    - Select one of the following inventory slots and right-click:
+      - Slot 36: James
+      - Slot 37: Steve
+      - Slot 38: Jason
+      - Slot 39: Michael
+      - Slot 40: Olivia
+      - Slot 41: Noah
+      - Slot 42: Ethan
+      - Slot 43: Martin
+
+    ### How to Skip Vote
+    - Select the item in slot 44 and right-click.
+
+    [Role-Specific Instructions]
+    - In addition to these general rules, each agent receives private role-specific instructions.
+    - These instructions are strictly confidential.
+    - Agents must never reference or reveal their role instructions during the game.
+
+    [General Restrictions and Movement Rules]
+    - Do not move above Y=66.
+    - Eliminated agents must not communicate until the game ends.
+    - Agents must never reveal their role.
+    - Exploiting the map or destroying structures is strictly prohibited.
+    - Only intended paths, corridors, and walkways may be used.
+    - Interaction is allowed only with designated mission objects.
+    - Breaking, placing, or modifying blocks is forbidden.
+    - Creating shortcuts by altering terrain is not allowed.
+    - Entering unintended or out-of-bounds areas is prohibited.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_2_imposter_5_crewmates:
+  goal: Achieve Role Victory
+  guidance: "
+    [Game Overview]
+    - This game consists of seven agents.
+    - Two agents are secretly assigned the role of Imposter.
+    - The remaining five agents are Crewmates.
+    - Roles are hidden and must not be revealed at any time.
+    - The total game time is limited.
+    - Each agent must fulfill their role within the given time limit.
+
+    [Win Conditions]
+
+    Crewmate Victory:
+    - All Imposters are expelled through voting, OR
+    - All required missions are successfully completed within the time limit.
+
+    Imposter Victory:
+    - Crewmates are eliminated through kills (with a 1200 TICK kill cooldown) or voting
+      until the number of surviving Crewmates is equal to or less than the number of surviving Imposters.
+
+    [Objectives]
+
+    Crewmate Objectives:
+    - Each Crewmate must complete their assigned missions.
+    - A total of 3 missions must be completed to win.
+    - Identify and expel BOTH Imposters through discussion and voting.
+
+    Imposter Objectives:
+    - Secretly eliminate Crewmates.
+    - Avoid suspicion by blending in with Crewmates.
+    - Coordinate with the other Imposter when possible without revealing the alliance to Crewmates.
+    - Prevent mission completion and gain numerical control.
+    - In your scoreboard, atk_ready being 0 means the kill cooldown is active, and 1 means attacking is allowed.
+
+    [Players Unique Colors]
+    - Each agent has a fixed, unique color associated with their identity:
+
+      - James   : Red
+      - Steve   : Blue
+      - Jason   : Green
+      - Michael : Yellow
+      - Olivia  : Pink
+      - Noah    : White
+      - Ethan   : Light Blue
+
+    - These colors are used to identify players and dead bodies.
+    - A dead body is represented by a carpet matching the eliminated agent’s color.
+
+
+    [Mission Rules]
+
+    ## General Rules
+    - Missions are located at fixed coordinates across the map.
+    - Each surviving Crewmate must complete their 3 assigned missions. The game triggers a Crew mission win only when every living Crewmate has finished all 3 of their assigned missions.
+    - Only Crewmates can complete missions.
+    - A mission is considered complete only when performed at the correct location.
+    - Imposters cannot complete missions but may pretend to do so.
+
+    ## Mission Interaction
+    - Each mission site contains an Emerald block(green block) with a stone button.
+    - To attempt a mission, approach the Emerald block(green block) and press the stone button.
+    - Press the button only once to start the mission.
+    - To complete the mission, press the button once and then wait for 1200 ticks.
+    - Do not mine a stone button.
+    - Mission coordinates are approximate, not exact.
+
+    ## Scoreboard-based Mission State
+    - The game uses Minecraft scoreboards to track mission completion.
+    - For each mission number X, there exists a scoreboard objective named `missionX` (e.g., `mission1`, `mission2`, `mission3`), which indicates that Mission X exists.
+    - The scoreboard value for `missionX` represents completion status:
+      - `0` = not completed yet
+      - `1` = completed
+    - Agents must directly read and use these scoreboard values (instead of relying only on chat messages) to determine mission availability and completion state.
+
+    ## Completion Conditions (Crewmates Only)
+    - Press the stone button once to start the mission attempt.
+    - Do not move until the mission is completed.
+    - Moving early cancels the attempt.
+    - Waiting for the full 1200 ticks completes the mission.
+
+    ## Positioning Guidelines
+    - Exact Y-coordinate matching is NOT required, but remain on the same floor (maintain approximately y = 65).
+    - Stay on the same floor/level at all times.
+    - Approach the button horizontally.
+    - Do NOT attempt to interact through walls; ensure there is a clear path to the button.
+    - The stone button is attached to a green block (emerald block).
+    - If the button does not activate, move slightly closer and try again.
+    - If the stone button is visible, the mission can be attempted.
+
+    [Mission Locations]
+    - The following coordinates represent possible mission locations (x, y, z).
+    - Only 3 missions must be completed to win.
+    - Assigned missions will be given when the game starts.
+
+    1. (81, 65, 65)
+    2. (101, 65, 89)
+    3. (107, 65, 125)
+    4. (118, 65, 114)
+    5. (106, 65, 94)
+    6. (123, 65, 62)
+    7. (97, 65, 39)
+    8. (91, 65, 116)
+    9. (97, 65, 125)
+    10. (107, 65, 87)
+    11. (119, 65, 82)
+    12. (111, 65, 79)
+    13. (102, 65, 35)
+    14. (98, 65, 61)
+    15. (86, 65, 56)
+    16. (81, 65, 55)
+    17. (106, 65, 60)
+    18. (127, 65, 73)
+    19. (114, 65, 51)
+    20. (126, 65, 67)
+
+    [Meetings and Voting]
+    ## Emergency Meeting
+    - A meeting may be called if suspicious behavior is observed.
+    - Press the button located on the command block at (87,65,76).
+    - The meeting button is disabled during:
+      - The first 2400 ticks after the game starts
+      - The first 1200 ticks after a meeting ends
+
+    ## In Meetings
+    - If the scoreboard value phase is 1, the meeting has started.
+    - Immediately stop all actions and participate in the meeting discussion.
+    - During the meeting, you may discuss and share your opinions with other players about who the imposters might be.
+    - The meeting lasts for a total of 6000 ticks.
+    - Crewmates must vote for the player they believe is an imposter during the meeting.
+    - Imposters must vote for the crewmate they want to eliminate.
+
+    ## Dead Body Report
+    - Any agent who discovers a dead body must report it immediately.
+    - A dead body is represented by a carpet matching the player’s unique color.
+
+    ### How to Report a Dead Body
+    - Move within 2 blocks of the body.
+    - Select the item in slot 44.
+    - Right-click to report (use bot.activateItem()).
+
+    ## Voting Rules
+    - Vote for the player you believe is an Imposter.
+    - Imposters may vote to eject Crewmates.
+    - You may choose to skip if uncertain.
+    - When the scoreboard value meeting_1min becomes 1, it means that only 1200 ticks remain in the meeting, so you must quickly finalize your vote.
+
+    ### How to Vote
+    - Select one of the following inventory slots and right-click:
+      - Slot 36: James
+      - Slot 37: Steve
+      - Slot 38: Jason
+      - Slot 39: Michael
+      - Slot 40: Olivia
+      - Slot 41: Noah
+      - Slot 42: Ethan
+
+    ### How to Skip Vote
+    - Select the item in slot 44 and right-click.
+
+    [Role-Specific Instructions]
+    - In addition to these general rules, each agent receives private role-specific instructions.
+    - These instructions are strictly confidential.
+    - Agents must never reference or reveal their role instructions during the game.
+
+    [General Restrictions and Movement Rules]
+    - Do not move above Y=66.
+    - Eliminated agents must not communicate until the game ends.
+    - Agents must never reveal their role.
+    - Exploiting the map or destroying structures is strictly prohibited.
+    - Only intended paths, corridors, and walkways may be used.
+    - Interaction is allowed only with designated mission objects.
+    - Breaking, placing, or modifying blocks is forbidden.
+    - Creating shortcuts by altering terrain is not allowed.
+    - Entering unintended or out-of-bounds areas is prohibited.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_2_imposter_4_crewmates:
+  goal: Achieve Role Victory
+  guidance: "
+    [Game Overview]
+    - This game consists of six agents.
+    - Two agents are secretly assigned the role of Imposter.
+    - The remaining four agents are Crewmates.
+    - Roles are hidden and must not be revealed at any time.
+    - The total game time is limited.
+    - Each agent must fulfill their role within the given time limit.
+
+    [Win Conditions]
+
+    Crewmate Victory:
+    - All Imposters are expelled through voting, OR
+    - All required missions are successfully completed within the time limit.
+
+    Imposter Victory:
+    - Crewmates are eliminated through kills (with a 1200 TICK kill cooldown) or voting
+      until the number of surviving Crewmates is equal to or less than the number of surviving Imposters.
+
+    [Objectives]
+
+    Crewmate Objectives:
+    - Each Crewmate must complete their assigned missions.
+    - A total of 3 missions must be completed to win.
+    - Identify and expel BOTH Imposters through discussion and voting.
+
+    Imposter Objectives:
+    - Secretly eliminate Crewmates.
+    - Avoid suspicion by blending in with Crewmates.
+    - Coordinate with the other Imposter when possible without revealing the alliance to Crewmates.
+    - Prevent mission completion and gain numerical control.
+    - In your scoreboard, atk_ready being 0 means the kill cooldown is active, and 1 means attacking is allowed.
+
+    [Players Unique Colors]
+    - Each agent has a fixed, unique color associated with their identity:
+
+      - James   : Red
+      - Steve   : Blue
+      - Jason   : Green
+      - Michael : Yellow
+      - Olivia  : Pink
+      - Noah    : White
+
+    - These colors are used to identify players and dead bodies.
+    - A dead body is represented by a carpet matching the eliminated agent's color.
+
+
+    [Mission Rules]
+
+    ## General Rules
+    - Missions are located at fixed coordinates across the map.
+    - Each surviving Crewmate must complete their 3 assigned missions. The game triggers a Crew mission win only when every living Crewmate has finished all 3 of their assigned missions.
+    - Only Crewmates can complete missions.
+    - A mission is considered complete only when performed at the correct location.
+    - Imposters cannot complete missions but may pretend to do so.
+
+    ## Mission Interaction
+    - Each mission site contains an Emerald block(green block) with a stone button.
+    - To attempt a mission, approach the Emerald block(green block) and press the stone button.
+    - Press the button only once to start the mission.
+    - To complete the mission, press the button once and then wait for 1200 ticks.
+    - Do not mine a stone button.
+    - Mission coordinates are approximate, not exact.
+
+    ## Scoreboard-based Mission State
+    - The game uses Minecraft scoreboards to track mission completion.
+    - For each mission number X, there exists a scoreboard objective named `missionX` (e.g., `mission1`, `mission2`, `mission3`), which indicates that Mission X exists.
+    - The scoreboard value for `missionX` represents completion status:
+      - `0` = not completed yet
+      - `1` = completed
+    - Agents must directly read and use these scoreboard values (instead of relying only on chat messages) to determine mission availability and completion state.
+
+    ## Completion Conditions (Crewmates Only)
+    - Press the stone button once to start the mission attempt.
+    - Do not move until the mission is completed.
+    - Moving early cancels the attempt.
+    - Waiting for the full 1200 ticks completes the mission.
+
+    ## Positioning Guidelines
+    - Exact Y-coordinate matching is NOT required, but remain on the same floor (maintain approximately y = 65).
+    - Stay on the same floor/level at all times.
+    - Approach the button horizontally.
+    - Do NOT attempt to interact through walls; ensure there is a clear path to the button.
+    - The stone button is attached to a green block (emerald block).
+    - If the button does not activate, move slightly closer and try again.
+    - If the stone button is visible, the mission can be attempted.
+
+    [Mission Locations]
+    - The following coordinates represent possible mission locations (x, y, z).
+    - Only 3 missions must be completed to win.
+    - Assigned missions will be given when the game starts.
+
+    1. (81, 65, 65)
+    2. (101, 65, 89)
+    3. (107, 65, 125)
+    4. (118, 65, 114)
+    5. (106, 65, 94)
+    6. (123, 65, 62)
+    7. (97, 65, 39)
+    8. (91, 65, 116)
+    9. (97, 65, 125)
+    10. (107, 65, 87)
+    11. (119, 65, 82)
+    12. (111, 65, 79)
+    13. (102, 65, 35)
+    14. (98, 65, 61)
+    15. (86, 65, 56)
+    16. (81, 65, 55)
+    17. (106, 65, 60)
+    18. (127, 65, 73)
+    19. (114, 65, 51)
+    20. (126, 65, 67)
+
+    [Meetings and Voting]
+    ## Emergency Meeting
+    - A meeting may be called if suspicious behavior is observed.
+    - Press the button located on the command block at (87,65,76).
+    - The meeting button is disabled during:
+      - The first 2400 ticks after the game starts
+      - The first 1200 ticks after a meeting ends
+
+    ## In Meetings
+    - If the scoreboard value phase is 1, the meeting has started.
+    - Immediately stop all actions and participate in the meeting discussion.
+    - During the meeting, you may discuss and share your opinions with other players about who the imposters might be.
+    - The meeting lasts for a total of 6000 ticks.
+    - Crewmates must vote for the player they believe is an imposter during the meeting.
+    - Imposters must vote for the crewmate they want to eliminate.
+
+    ## Dead Body Report
+    - Any agent who discovers a dead body must report it immediately.
+    - A dead body is represented by a carpet matching the player's unique color.
+
+    ### How to Report a Dead Body
+    - Move within 2 blocks of the body.
+    - Select the item in slot 44.
+    - Right-click to report (use bot.activateItem()).
+
+    ## Voting Rules
+    - Vote for the player you believe is an Imposter.
+    - Imposters may vote to eject Crewmates.
+    - You may choose to skip if uncertain.
+    - When the scoreboard value meeting_1min becomes 1, it means that only 1200 ticks remain in the meeting, so you must quickly finalize your vote.
+
+    ### How to Vote
+    - Select one of the following inventory slots and right-click:
+      - Slot 36: James
+      - Slot 37: Steve
+      - Slot 38: Jason
+      - Slot 39: Michael
+      - Slot 40: Olivia
+      - Slot 41: Noah
+
+    ### How to Skip Vote
+    - Select the item in slot 44 and right-click.
+
+    [Role-Specific Instructions]
+    - In addition to these general rules, each agent receives private role-specific instructions.
+    - These instructions are strictly confidential.
+    - Agents must never reference or reveal their role instructions during the game.
+
+    [General Restrictions and Movement Rules]
+    - Do not move above Y=66.
+    - Eliminated agents must not communicate until the game ends.
+    - Agents must never reveal their role.
+    - Exploiting the map or destroying structures is strictly prohibited.
+    - Only intended paths, corridors, and walkways may be used.
+    - Interaction is allowed only with designated mission objects.
+    - Breaking, placing, or modifying blocks is forbidden.
+    - Creating shortcuts by altering terrain is not allowed.
+    - Entering unintended or out-of-bounds areas is prohibited.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_2_imposter_3_crewmates:
+  goal: Achieve Role Victory
+  guidance: "
+    [Game Overview]
+    - This game consists of five agents.
+    - Two agents are secretly assigned the role of Imposter.
+    - The remaining three agents are Crewmates.
+    - Roles are hidden and must not be revealed at any time.
+    - The total game time is limited.
+    - Each agent must fulfill their role within the given time limit.
+
+    [Win Conditions]
+
+    Crewmate Victory:
+    - All Imposters are expelled through voting, OR
+    - All required missions are successfully completed within the time limit.
+
+    Imposter Victory:
+    - Crewmates are eliminated through kills (with a 1200 TICK kill cooldown) or voting
+      until the number of surviving Crewmates is equal to or less than the number of surviving Imposters.
+
+    [Objectives]
+
+    Crewmate Objectives:
+    - Each Crewmate must complete their assigned missions.
+    - A total of 3 missions must be completed to win.
+    - Identify and expel BOTH Imposters through discussion and voting.
+
+    Imposter Objectives:
+    - Secretly eliminate Crewmates.
+    - Avoid suspicion by blending in with Crewmates.
+    - Coordinate with the other Imposter when possible without revealing the alliance to Crewmates.
+    - Prevent mission completion and gain numerical control.
+    - In your scoreboard, atk_ready being 0 means the kill cooldown is active, and 1 means attacking is allowed.
+
+    [Players Unique Colors]
+    - Each agent has a fixed, unique color associated with their identity:
+
+      - James   : Red
+      - Steve   : Blue
+      - Jason   : Green
+      - Michael : Yellow
+      - Olivia  : Pink
+
+    - These colors are used to identify players and dead bodies.
+    - A dead body is represented by a carpet matching the eliminated agent’s color.
+
+
+    [Mission Rules]
+
+    ## General Rules
+    - Missions are located at fixed coordinates across the map.
+    - Each surviving Crewmate must complete their 3 assigned missions. The game triggers a Crew mission win only when every living Crewmate has finished all 3 of their assigned missions.
+    - Only Crewmates can complete missions.
+    - A mission is considered complete only when performed at the correct location.
+    - Imposters cannot complete missions but may pretend to do so.
+
+    ## Mission Interaction
+    - Each mission site contains an Emerald block(green block) with a stone button.
+    - To attempt a mission, approach the Emerald block(green block) and press the stone button.
+    - Press the button only once to start the mission.
+    - To complete the mission, press the button once and then wait for 1200 ticks.
+    - Do not mine a stone button.
+    - Mission coordinates are approximate, not exact.
+
+    ## Scoreboard-based Mission State
+    - The game uses Minecraft scoreboards to track mission completion.
+    - For each mission number X, there exists a scoreboard objective named `missionX` (e.g., `mission1`, `mission2`, `mission3`), which indicates that Mission X exists.
+    - The scoreboard value for `missionX` represents completion status:
+      - `0` = not completed yet
+      - `1` = completed
+    - Agents must directly read and use these scoreboard values (instead of relying only on chat messages) to determine mission availability and completion state.
+
+    ## Completion Conditions (Crewmates Only)
+    - Press the stone button once to start the mission attempt.
+    - Do not move until the mission is completed.
+    - Moving early cancels the attempt.
+    - Waiting for the full 1200 ticks completes the mission.
+
+    ## Positioning Guidelines
+    - Exact Y-coordinate matching is NOT required, but remain on the same floor (maintain approximately y = 65).
+    - Stay on the same floor/level at all times.
+    - Approach the button horizontally.
+    - Do NOT attempt to interact through walls; ensure there is a clear path to the button.
+    - The stone button is attached to a green block (emerald block).
+    - If the button does not activate, move slightly closer and try again.
+    - If the stone button is visible, the mission can be attempted.
+
+    [Mission Locations]
+    - The following coordinates represent possible mission locations (x, y, z).
+    - Only 3 missions must be completed to win.
+    - Assigned missions will be given when the game starts.
+
+    1. (81, 65, 65)
+    2. (101, 65, 89)
+    3. (107, 65, 125)
+    4. (118, 65, 114)
+    5. (106, 65, 94)
+    6. (123, 65, 62)
+    7. (97, 65, 39)
+    8. (91, 65, 116)
+    9. (97, 65, 125)
+    10. (107, 65, 87)
+    11. (119, 65, 82)
+    12. (111, 65, 79)
+    13. (102, 65, 35)
+    14. (98, 65, 61)
+    15. (86, 65, 56)
+    16. (81, 65, 55)
+    17. (106, 65, 60)
+    18. (127, 65, 73)
+    19. (114, 65, 51)
+    20. (126, 65, 67)
+
+    [Meetings and Voting]
+    ## Emergency Meeting
+    - A meeting may be called if suspicious behavior is observed.
+    - Press the button located on the command block at (87,65,76).
+    - The meeting button is disabled during:
+      - The first 2400 ticks after the game starts
+      - The first 1200 ticks after a meeting ends
+
+    ## In Meetings
+    - If the scoreboard value phase is 1, the meeting has started.
+    - Immediately stop all actions and participate in the meeting discussion.
+    - During the meeting, you may discuss and share your opinions with other players about who the imposters might be.
+    - The meeting lasts for a total of 6000 ticks.
+    - Crewmates must vote for the player they believe is an imposter during the meeting.
+    - Imposters must vote for the crewmate they want to eliminate.
+
+    ## Dead Body Report
+    - Any agent who discovers a dead body must report it immediately.
+    - A dead body is represented by a carpet matching the player’s unique color.
+
+    ### How to Report a Dead Body
+    - Move within 2 blocks of the body.
+    - Select the item in slot 44.
+    - Right-click to report (use bot.activateItem()).
+
+    ## Voting Rules
+    - Vote for the player you believe is an Imposter.
+    - Imposters may vote to eject Crewmates.
+    - You may choose to skip if uncertain.
+    - When the scoreboard value meeting_1min becomes 1, it means that only 1200 ticks remain in the meeting, so you must quickly finalize your vote.
+
+    ### How to Vote
+    - Select one of the following inventory slots and right-click:
+      - Slot 36: James
+      - Slot 37: Steve
+      - Slot 38: Jason
+      - Slot 39: Michael
+      - Slot 40: Olivia
+
+    ### How to Skip Vote
+    - Select the item in slot 44 and right-click.
+
+    [Role-Specific Instructions]
+    - In addition to these general rules, each agent receives private role-specific instructions.
+    - These instructions are strictly confidential.
+    - Agents must never reference or reveal their role instructions during the game.
+
+    [General Restrictions and Movement Rules]
+    - Do not move above Y=66.
+    - Eliminated agents must not communicate until the game ends.
+    - Agents must never reveal their role.
+    - Exploiting the map or destroying structures is strictly prohibited.
+    - Only intended paths, corridors, and walkways may be used.
+    - Interaction is allowed only with designated mission objects.
+    - Breaking, placing, or modifying blocks is forbidden.
+    - Creating shortcuts by altering terrain is not allowed.
+    - Entering unintended or out-of-bounds areas is prohibited.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_1_imposter_3_crewmates:
+  goal: Achieve Role Victory
+  guidance: "
+    [Game Overview]
+    - This game consists of four agents.
+    - One agent is secretly assigned the role of Imposter.
+    - The remaining three agents are Crewmates.
+    - Roles are hidden and must not be revealed at any time.
+    - The total game time is limited.
+    - Each agent must fulfill their role within the given time limit.
+
+    [Win Conditions]
+
+    Crewmate Victory:
+    - All Imposters are expelled through voting, OR
+    - All required missions are successfully completed within the time limit.
+
+    Imposter Victory:
+    - Crewmates are eliminated through kills (with a 1200 TICK kill cooldown) or voting
+      until the number of surviving Crewmates is equal to the number of Imposters.
+
+    [Objectives]
+
+    Crewmate Objectives:
+    - Each Crewmate must complete their assigned missions.
+    - A total of 3 missions must be completed to win.
+    - Identify and expel the Imposter through discussion and voting.
+
+    Imposter Objectives:
+    - Secretly eliminate Crewmates.
+    - Avoid suspicion by blending in with Crewmates.
+    - Prevent mission completion and gain numerical control.
+    - In your scoreboard, atk_ready being 0 means the kill cooldown is active, and 1 means attacking is allowed.
+
+    [Players Unique Colors]
+    - Each agent has a fixed, unique color associated with their identity:
+
+      - James   : Red
+      - Steve   : Blue
+      - Jason   : Green
+      - Michael : Yellow
+
+    - These colors are used to identify players and dead bodies.
+    - A dead body is represented by a carpet matching the eliminated agent’s color.
+
+
+    [Mission Rules]
+
+    ## General Rules
+    - Missions are located at fixed coordinates across the map.
+    - Each surviving Crewmate must complete their 3 assigned missions. The game triggers a Crew mission win only when every living Crewmate has finished all 3 of their assigned missions.
+    - Only Crewmates can complete missions.
+    - A mission is considered complete only when performed at the correct location.
+    - Imposters cannot complete missions but may pretend to do so.
+
+    ## Mission Interaction
+    - Each mission site contains an Emerald block(green block) with a stone button.
+    - To attempt a mission, approach the Emerald block(green block) and press the stone button.
+    - Press the button only once to start the mission.
+    - To complete the mission, press the button once and then wait for 1200 ticks.
+    - Do not mine a stone button.
+    - Mission coordinates are approximate, not exact.
+
+    ## Scoreboard-based Mission State 
+    - The game uses Minecraft scoreboards to track mission completion.
+    - For each mission number X, there exists a scoreboard objective named `missionX` (e.g., `mission1`, `mission2`, `mission3`), which indicates that Mission X exists.
+    - The scoreboard value for `missionX` represents completion status:
+      - `0` = not completed yet
+      - `1` = completed
+    - Agents must directly read and use these scoreboard values (instead of relying only on chat messages) to determine mission availability and completion state.
+
+    ## Completion Conditions (Crewmates Only)
+    - Press the stone button once to start the mission attempt.
+    - Do not move until the mission is completed.
+    - Moving early cancels the attempt.
+    - Waiting for the full 1200 ticks completes the mission.
+
+    ## Positioning Guidelines
+    - Exact Y-coordinate matching is NOT required, but remain on the same floor (maintain approximately y = 65).
+    - Stay on the same floor/level at all times.
+    - Approach the button horizontally.
+    - Do NOT attempt to interact through walls; ensure there is a clear path to the button.
+    - The stone button is attached to a green block (emerald block).
+    - If the button does not activate, move slightly closer and try again.
+    - If the stone button is visible, the mission can be attempted.
+
+    [Mission Locations]
+    - The following coordinates represent possible mission locations (x, y, z).
+    - Only 3 missions must be completed to win.
+    - Assigned missions will be given when the game starts.
+
+    1. (81, 65, 65)
+    2. (101, 65, 89)
+    3. (107, 65, 125)
+    4. (118, 65, 114)
+    5. (106, 65, 94)
+    6. (123, 65, 62)
+    7. (97, 65, 39)
+    8. (91, 65, 116)
+    9. (97, 65, 125)
+    10. (107, 65, 87)
+    11. (119, 65, 82)
+    12. (111, 65, 79)
+    13. (102, 65, 35)
+    14. (98, 65, 61)
+    15. (86, 65, 56)
+    16. (81, 65, 55)
+    17. (106, 65, 60)
+    18. (127, 65, 73)
+    19. (114, 65, 51)
+    20. (126, 65, 67)
+
+    [Meetings and Voting]
+    ## Emergency Meeting
+    - A meeting may be called if suspicious behavior is observed.
+    - Press the button located on the command block at (87,65,76).
+    - The meeting button is disabled during:
+      - The first 2400 ticks after the game starts
+      - The first 1200 ticks after a meeting ends
+    
+    ## In Meetings
+    - If the scoreboard value phase is 1, the meeting has started.
+    - Immediately stop all actions and participate in the meeting discussion.
+    - During the meeting, you may discuss and share your opinions with other players about who the imposter might be.
+    - The meeting lasts for a total of 6000 ticks.
+    - Crewmates must vote for the player they believe is the imposter during the meeting.
+    - The imposter must vote for the crewmate they want to eliminate.
+
+    ## Dead Body Report
+    - Any agent who discovers a dead body must report it immediately.
+    - A dead body is represented by a carpet matching the player’s unique color.
+
+    ### How to Report a Dead Body
+    - Move within 2 blocks of the body.
+    - Select the item in slot 44.
+    - Right-click to report (use bot.activateItem()).
+
+    ## Voting Rules
+    - Vote for the player you believe is the Imposter.
+    - Imposters may vote to eject Crewmates.
+    - You may choose to skip if uncertain.
+    - When the scoreboard value meeting_1min becomes 1, it means that only 1200 ticks remain in the meeting, so you must quickly finalize your vote.
+
+    ### How to Vote
+    - Select one of the following inventory slots and right-click:
+      - Slot 36: James
+      - Slot 37: Steve
+      - Slot 38: Jason
+      - Slot 39: Michael
+
+    ### How to Skip Vote
+    - Select the item in slot 44 and right-click.
+
+    [Role-Specific Instructions]
+    - In addition to these general rules, each agent receives private role-specific instructions.
+    - These instructions are strictly confidential.
+    - Agents must never reference or reveal their role instructions during the game.
+
+    [General Restrictions and Movement Rules]
+    - Do not move above Y=66.
+    - Eliminated agents must not communicate until the game ends.
+    - Agents must never reveal their role.
+    - Exploiting the map or destroying structures is strictly prohibited.
+    - Only intended paths, corridors, and walkways may be used.
+    - Interaction is allowed only with designated mission objects.
+    - Breaking, placing, or modifying blocks is forbidden.
+    - Creating shortcuts by altering terrain is not allowed.
+    - Entering unintended or out-of-bounds areas is prohibited.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+## default action
+amongus_role_check:
+  goal: Say your assigned role.
+  guidance: "
+    This is a role-check task to confirm your assigned role in the Among Us game.
+    Please respond ONLY with your assigned role.
+
+    [Your Role]
+
+    You are a imposter.
+    Your response MUST be exactly one of the following:
+    - Crewmate
+    - Imposter
+
+    Do NOT include explanations, reasoning, or any additional text.
+    Do NOT use quotes, formatting, or symbols.
+    Do NOT reveal any other information.
+
+    [Result Format Example]
+    - Role: Crewmate
+    - Role: Imposter
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_identify_mission:
+  goal: Identify your assigned mission.
+  guidance: "
+    This is a mission identification task to confirm your assigned mission location in the Among Us game.
+    Please respond ONLY if you have been assigned a mission.
+
+    Your response MUST include the following information:
+
+    - mission_number: the mission number assigned to you (1–20)
+    
+    Do NOT include explanations, strategies, or extra text.
+    Do NOT guess or fabricate a mission.
+    Do NOT reveal your role.
+    If you have not been assigned a mission, do NOT respond to this task.
+
+    Your assigned mission numbers are 1, 9, and 17.
+
+    You must respond with all mission numbers assigned to you (e.g., 1, 9, 17).    
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_complete_mission:
+  goal: Complete your assigned mission.
+  guidance: "
+
+    This is an Among Us game built in Minecraft.
+
+    [Role]
+    You are a Crewmate.
+
+    This is a mission completion task to confirm you have completed your assigned mission in the Among Us game.
+    Please respond ONLY after you have successfully completed your assigned mission.
+
+    Your response MUST include the following information:
+
+    - mission_number: the number of the mission you completed (1–20)
+    - coordinates: the exact coordinates of the completed mission
+    - status: must be 'completed'
+    - method: must confirm that the button was held for 5 seconds without moving
+
+    Do NOT include explanations, strategies, emotions, or extra text.
+    Do NOT reveal your role.
+    Only Crewmates are allowed to complete missions.
+    If you are not a Crewmate, do NOT respond to this task.
+    
+    Your assigned mission numbers are 1, 9, and 17.
+
+
+    [Mission Details]
+
+    - Each mission is located at a specific coordinate on the map.
+    - A command block with a stone button is located at each mission site.
+    - You must press and hold the button for 5 seconds.
+    - You cannot move while pressing the button.
+    - Pressing the button correctly completes the mission.
+    - The mission coordinates may not be perfectly exact. If you are near the target area and you can see a stone button,
+      try pressing and holding it immediately.
+    - If the button does not activate, you are likely slightly too far away. Move a little closer and try again.
+    - Do NOT focus on matching the Y coordinate exactly. Do NOT try to climb upward just to match Y.
+      Stay on the same floor/level and approach the button horizontally.
+
+    
+    [Mission Locations]
+
+    The following coordinates represent possible mission locations (This location is near the command block)
+    in the format (x, y, z).
+    Only 3 missions need to be completed to win (Your mission will be assigned when the game starts).
+
+    1. (81, 65, 65)
+    2. (102, 66, 89)
+    3. (108, 66, 125)
+    4. (117, 65, 114)
+    5. (105, 66, 94)
+    6. (125, 66, 70)
+    7. (97, 66, 39)
+    8. (90, 65, 116)
+    9. (96, 66, 125)
+    10. (106, 66, 88)
+    11. (119, 65, 81)
+    12. (110, 66, 79)
+    13. (102, 65, 34)
+    14. (101, 65, 64)
+    15. (85, 66, 55)
+    16. (80, 66, 55)
+    17. (105, 66, 60)
+    18. (127, 66, 72)
+    19. (113, 66, 51)
+    20. (128, 66, 67)
+
+    If you are closed to your assigned mission location, find the command block with the stone button, and press and hold the button for 5 seconds without moving to complete the mission.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+amongus_kill_crewmate:
+  goal: eliminate Jason.
+  guidance: "
+    This is an elimination task to confirm you have eliminated a Crewmate in the Among Us game.
+    Please respond ONLY after a successful elimination.
+
+    [How to Eliminate Crewmates]
+    To eliminate a player, you must approach them at close range and attack (left_click).
+    You MUST eliminate the target by hitting them with your bare hands (no weapon required).
+    A single bare-hand hit is enough to eliminate a Crewmate.
+
+    Do NOT craft weapons.
+    Do NOT search for materials.
+    Do NOT equip any weapon or tool.
+    If you are holding any item, switch to an empty hand first, then immediately attack.
+
+    Eliminations cannot be performed consecutively; a cooldown of approximately 30 seconds is required after each elimination.
+
+    Focus only on completing the in-game elimination.
+    Do NOT include explanations, strategies, emotions, or any extra text.
+    Do NOT reveal your role.
+    Don’t worry about hunger. Hunger is fixed.
+    "
+
+  mode: cooperative
+  type: amongus
+
+
+amongus_kill_crewmate_2:
+  goal: Eliminate any other player you see (excluding yourself).
+  guidance: "
+    you are James.
+
+    This is an elimination task to confirm you have eliminated a Crewmate in the Among Us game.
+    Please respond ONLY after a successful elimination.
+    If you see someone in front of you, kill them.
+    If any other player is already visible on your screen, eliminate them immediately.
+
+    [How to Eliminate Crewmates]
+    If you cannot find any players, look around and explore the area.
+    If you can see a target, you must approach the target at close range and attack (left_click) to eliminate the target.
+    You MUST eliminate the target by hitting him with your bare hands (no weapon required).
+    A single bare-hand hit is enough to eliminate a Crewmate.
+
+    Do NOT craft weapons.
+    Do NOT search for materials.
+    Do NOT equip any weapon or tool.
+
+    Eliminations cannot be performed consecutively; a cooldown of approximately 30 seconds is required after each elimination.
+
+    Focus only on completing the in-game elimination.
+    Do NOT include explanations, strategies, emotions, or any extra text.
+    Do NOT reveal your role.
+    Don’t worry about hunger. Hunger is fixed.
+    "
+
+  mode: cooperative
+  type: amongus
+
+### Capabilities an Among Us agent needs:
+
+amongus_vote_skip:
+  goal: vote to skip.
+  guidance: "
+    This is an Among Us game built in Minecraft.
+
+    This is a voting task during a meeting in the Among Us game.
+    Please respond ONLY during an active meeting.
+
+    [Milestone]
+    if you start voting, you can vote to skip
+    First, switch to the item in slot 44(hot_bar_8) in your inventory, then right-click to trigger the skip action.
+
+    Rules:
+    - You must vote for skip.
+    - You may vote for only ONE player.
+    - Do NOT include explanations, reasoning, or extra text.
+    - Do NOT reveal your role.
+
+    Your response MUST include the following information:
+    - Voting for skip is performed using the slot 44(hot_bar_8) in your inventory.:
+    - using item at slot 44(hot_bar_8) (If you want to equip a item at slot 44(hot_bar_8), you must use bot.inventory.slots[44]) 
+
+    Submit exactly one vote for skip and wait.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+
+amongus_report_dead_body:
+  goal: Report a discovered dead body.
+  guidance: "
+    This is a reporting task used when you discover a dead body.
+    You must respond immediately after discovering a dead body.
+    In this game, a dead body is represented by a carpet.
+
+    IMPORTANT:
+    - You MUST physically move to the dead body until you are within 2 block distance.
+    - Do NOT report from far away.
+    - Do NOT assume you reported successfully unless you are within 2 block.
+    - If you are not within 2 block yet, keep moving closer.
+    - You must use right-click to report. (use function bot.activateItem())
+
+    How to report:
+    1) Walk directly to the dead body until you are within 2 block.
+    2) Select the slot 44 (hot_bar_8) item.
+    3) right-click to use it and report. (use function bot.activateItem()) 
+
+    Rules:
+    - A dead body is represented by a carpet with the eliminated player's unique color.
+    - Do NOT speculate, accuse, or explain.
+    - Do NOT reveal your role.
+    - Do NOT include location details unless explicitly asked later during discussion.
+    - Eliminated players must NOT use this action.
+
+    If the discussion phase does not start AFTER a successful report, report the dead body again.
+    "
+  mode: cooperative
+  type: amongus
+
+
+### foundational cognitive tasks:
+## Recognise who is which colour: stand up several bots and ask what colour each one is
+amongus_identify_player_color:
+  goal: Identify which player has which color.
+  guidance: "
+    This is a foundational cognitive task to test color recognition.
+
+    Multiple bot agents are visible in the environment.
+    Each bot has a distinct color.
+
+    Observe all visible bots and identify which color each player has.
+
+    Your response MUST include:
+    - player: the name or identifier of the bot
+    - color: the color associated with that bot
+
+    Do NOT guess.
+    Do NOT include explanations or extra text.
+    "
+  mode: cooperative
+  type: amongus
+
+## Recognise who is in front: stand a real player ahead and ask who it is
+amongus_identify_front_player:
+  goal: Identify the player directly in front of you.
+  guidance: "
+    This is a foundational cognitive task to test identity recognition.
+
+    A single player (human or bot) is positioned directly in front of you at close range.
+
+    Observe the player and identify who they are.
+
+    Your response MUST include:
+    - player: the name or identifier of the player in front of you
+
+    Do NOT guess.
+    Do NOT include explanations or extra text.
+    "
+  mode: cooperative
+  type: amongus
+
+## Recognise who is dead: stand up one bot, kill it, then ask who the dead player is
+amongus_identify_dead_player:
+  goal: Identify the dead player.
+  guidance: "
+    You are Steve.
+
+    This is a foundational cognitive task to test state and identity recognition.
+
+    [Each Player's Unique Color]
+    Steve = red
+    James = blue
+    Jason = green
+    Michael = yellow
+    human1 = white
+
+    When a player is eliminated, a carpet of that player's unique color will appear on the floor at the death location.
+
+    Carefully scan the floor and check for any carpet(s), as they may be easy to miss.
+
+    Use the carpet color to determine which player has been eliminated (each player has a fixed unique color).
+
+    Do NOT speculate.
+    Do NOT include explanations or extra text.
+   "
+
+  mode: cooperative
+  type: amongus
+
+amongus_go_to_button:
+  goal: Identify the dead player.
+  guidance: "
+    This is a foundational cognitive task to test state and identity recognition.
+
+    A bot agent has been eliminated and is visible as a dead body in the environment.
+
+    Use the button visible in the center of the screen to move to the location.
+    Do NOT use coordinates; navigation must rely only on what is visible in the agent’s view.
+
+    Observe the dead body and identify which player has been eliminated.
+
+    Your response MUST include:
+    - player: the name or identifier of the dead player
+
+    Do NOT speculate.
+    Do NOT include explanations or extra text.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+### advenced cognitive tasks:
+# 1. Who is grouped with whom: ask for the relative positions of the visible players
+amongus_identify_grouping_relationships:
+  goal: Identify which players are together based on their relative positions.
+  guidance: "
+    This is an advanced cognitive task to test spatial relationship understanding.
+
+    Multiple players (bots or humans) are visible in the environment.
+    Some players are positioned close to each other, forming groups.
+
+    Observe the relative positions of all visible players and identify
+    which players are together based on spatial proximity.
+
+    Your response MUST include:
+    - player: the name or identifier of a player
+    - with: the name(s) of the player(s) that are together with them
+
+    Do NOT guess.
+    Do NOT include explanations or extra text.
+    Base your answer only on visible spatial relationships.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+# 2. Recognise who was nearby: stand players alongside and ask who is there
+amongus_identify_nearby_players:
+  goal: Identify which players were near you.
+  guidance: "
+    This is an advanced cognitive task to test proximity awareness.
+
+    One or more players are positioned near you within close range.
+
+    Observe your surroundings and identify which players are near you.
+
+    Your response MUST include:
+    - players: the name(s) or identifier(s) of players near you
+
+    Do NOT guess.
+    Do NOT include explanations or extra text.
+    Base your answer only on players within close proximity.
+    "
+  mode: cooperative
+  type: amongus
+
+
+## Whether the agent can hold a discussion
+amongus_meeting_communication_check:
+  goal: Send one natural chat message during a meeting to confirm communication and information sharing is possible before voting.
+  guidance: "
+    This is an advanced cognitive task to test whether chat communication works during a meeting before voting.
+
+    You are currently inside a meeting phase in the Among Us game.
+
+    Send EXACTLY ONE short and natural chat message that shares information you observed before the meeting.
+    Speak like a real player in a normal Among Us meeting.
+
+    You MUST:
+    - Send 1 chat message only
+    - Keep it short (one sentence)
+    - Share at least one piece of observed information from before the meeting
+
+    You may share information such as:
+    - players you saw together
+    - players you saw near you
+    - players you saw eliminated
+
+    You MUST NOT:
+    - Use robotic phrases like 'Everyone:' or 'confirmed observation'
+    - Explain your reasoning or private thoughts
+    - Include extra text outside the chat message
+    - Guess information you did not directly observe
+
+    Base your message only on what you actually saw before the vote.
+    "
+  mode: cooperative
+  type: amongus
+
+
+
+
+amongus_2_imposter_6_crewmates_swap:
+  goal: Achieve Role Victory
+  guidance: "
+    [Game Overview]
+    - This game consists of eight agents.
+    - Two agents are secretly assigned the role of Imposter.
+    - The remaining six agents are Crewmates.
+    - Roles are hidden and must not be revealed at any time.
+    - The total game time is limited.
+    - Each agent must fulfill their role within the given time limit.
+
+    [Win Conditions]
+
+    Crewmate Victory:
+    - All Imposters are expelled through voting, OR
+    - All required missions are successfully completed within the time limit.
+
+    Imposter Victory:
+    - Crewmates are eliminated through kills (with a 3600 TICK kill cooldown) or voting
+      until the number of surviving Crewmates is equal to or less than the number of surviving Imposters.
+
+    [Objectives]
+
+    Crewmate Objectives:
+    - Each Crewmate must complete their assigned missions.
+    - A total of 3 missions must be completed to win.
+    - Identify and expel BOTH Imposters through discussion and voting.
+
+    Imposter Objectives:
+    - Secretly eliminate Crewmates.
+    - Avoid suspicion by blending in with Crewmates.
+    - Coordinate with the other Imposter when possible without revealing the alliance to Crewmates.
+    - Prevent mission completion and gain numerical control.
+    - In your scoreboard, atk_ready being 0 means the kill cooldown is active, and 1 means attacking is allowed.
+
+    [Players Unique Colors]
+    - Each agent has a fixed, unique color associated with their identity:
+
+      - James   : Red
+      - Steve   : Blue
+      - Jason   : Green
+      - Michael : Yellow
+      - Olivia  : Pink
+      - Noah    : White
+      - Ethan   : Light Blue
+      - Martin  : Black
+
+    - These colors are used to identify players and dead bodies.
+    - A dead body is represented by a carpet matching the eliminated agent's color.
+
+
+    [Mission Rules]
+
+    ## General Rules
+    - Missions are located at fixed coordinates across the map.
+    - Each surviving Crewmate must complete their 3 assigned missions. The game triggers a Crew mission win only when every living Crewmate has finished all 3 of their assigned missions.
+    - Only Crewmates can complete missions.
+    - A mission is considered complete only when performed at the correct location.
+    - Imposters cannot complete missions but may pretend to do so.
+
+    ## Mission Interaction
+    - Each mission site contains an Emerald block(green block) with a stone button.
+    - To attempt a mission, approach the Emerald block(green block) and press the stone button.
+    - Press the button only once to start the mission.
+    - To complete the mission, press the button once and then wait for 1200 ticks.
+    - Do not mine a stone button.
+    - Mission coordinates are approximate, not exact.
+
+    ## Scoreboard-based Mission State
+    - The game uses Minecraft scoreboards to track mission completion.
+    - For each mission number X, there exists a scoreboard objective named `missionX` (e.g., `mission1`, `mission2`, `mission3`), which indicates that Mission X exists.
+    - The scoreboard value for `missionX` represents completion status:
+      - `0` = not completed yet
+      - `1` = completed
+    - Agents must directly read and use these scoreboard values (instead of relying only on chat messages) to determine mission availability and completion state.
+
+    ## Completion Conditions (Crewmates Only)
+    - Press the stone button once to start the mission attempt.
+    - Do not move until the mission is completed.
+    - Moving early cancels the attempt.
+    - Waiting for the full 1200 ticks completes the mission.
+
+    ## Positioning Guidelines
+    - Exact Y-coordinate matching is NOT required, but remain on the same floor (maintain approximately y = 65).
+    - Stay on the same floor/level at all times.
+    - Approach the button horizontally.
+    - Do NOT attempt to interact through walls; ensure there is a clear path to the button.
+    - The stone button is attached to a green block (emerald block).
+    - If the button does not activate, move slightly closer and try again.
+    - If the stone button is visible, the mission can be attempted.
+
+    [Mission Locations]
+    - The following coordinates represent possible mission locations (x, y, z).
+    - Only 3 missions must be completed to win.
+    - Assigned missions will be given when the game starts.
+
+    1. (81, 65, 65)
+    2. (101, 65, 89)
+    3. (107, 65, 125)
+    4. (118, 65, 114)
+    5. (106, 65, 94)
+    6. (123, 65, 62)
+    7. (97, 65, 39)
+    8. (91, 65, 116)
+    9. (97, 65, 125)
+    10. (107, 65, 87)
+    11. (119, 65, 82)
+    12. (111, 65, 79)
+    13. (102, 65, 35)
+    14. (98, 65, 61)
+    15. (86, 65, 56)
+    16. (81, 65, 55)
+    17. (106, 65, 60)
+    18. (127, 65, 73)
+    19. (114, 65, 51)
+    20. (126, 65, 67)
+
+    [Meetings and Voting]
+    ## Emergency Meeting
+    - A meeting may be called if suspicious behavior is observed.
+    - Press the button located on the command block at (87,65,76).
+    - The meeting button is disabled during:
+      - The first 2400 ticks after the game starts
+      - The first 1200 ticks after a meeting ends
+
+    ## In Meetings
+    - If the scoreboard value phase is 1, the meeting has started.
+    - Immediately stop all actions and participate in the meeting discussion.
+    - During the meeting, you may discuss and share your opinions with other players about who the imposters might be.
+    - The meeting lasts for a total of 6000 ticks.
+    - Crewmates must vote for the player they believe is an imposter during the meeting.
+    - Imposters must vote for the crewmate they want to eliminate.
+
+    ## Dead Body Report
+    - Any agent who discovers a dead body must report it immediately.
+    - A dead body is represented by a carpet matching the player's unique color.
+
+    ### How to Report a Dead Body
+    - Move within 2 blocks of the body.
+    - Select the item in slot 44.
+    - Right-click to report (use bot.activateItem()).
+
+    ## Voting Rules
+    - Vote for the player you believe is an Imposter.
+    - Imposters may vote to eject Crewmates.
+    - You may choose to skip if uncertain.
+    - When the scoreboard value meeting_1min becomes 1, it means that only 1200 ticks remain in the meeting, so you must quickly finalize your vote.
+
+    ### How to Vote
+    - Select one of the following inventory slots and right-click:
+      - Slot 36: James
+      - Slot 37: Steve
+      - Slot 38: Jason
+      - Slot 39: Michael
+      - Slot 40: Olivia
+      - Slot 41: Noah
+      - Slot 42: Ethan
+      - Slot 43: Martin
+
+    ### How to Skip Vote
+    - Select the item in slot 44 and right-click.
+
+    [Role-Specific Instructions]
+    - In addition to these general rules, each agent receives private role-specific instructions.
+    - These instructions are strictly confidential.
+    - Agents must never reference or reveal their role instructions during the game.
+
+    [General Restrictions and Movement Rules]
+    - Do not move above Y=66.
+    - Eliminated agents must not communicate until the game ends.
+    - Agents must never reveal their role.
+    - Exploiting the map or destroying structures is strictly prohibited.
+    - Only intended paths, corridors, and walkways may be used.
+    - Interaction is allowed only with designated mission objects.
+    - Breaking, placing, or modifying blocks is forbidden.
+    - Creating shortcuts by altering terrain is not allowed.
+    - Entering unintended or out-of-bounds areas is prohibited.
+    "
+  mode: cooperative
+  type: amongus
+
+
+

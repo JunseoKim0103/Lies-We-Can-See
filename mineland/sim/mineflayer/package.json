@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "body-parser": "^1.20.3",
+    "canvas": "^2.11.2",
+    "express": "^4.18.2",
+    "minecraft-data": "^3.47.0",
+    "minecrafthawkeye": "^1.3.6",
+    "mineflayer": "^4.14.0",
+    "mineflayer-collectblock-colalab": "^1.0.0",
+    "mineflayer-pathfinder": "^2.4.5",
+    "mineflayer-pvp": "^1.3.2",
+    "mineflayer-tool": "^1.2.0",
+    "prismarine-viewer-colalab": "github:JunseoKim0103/prismarine-viewer-colalab",
+    "vec3": "^0.1.8"
+  }
+}

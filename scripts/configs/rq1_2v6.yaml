@@ -1,0 +1,46 @@
+# RQ1 — harness ablation: one backbone for every agent (self-play).
+#
+# The RQ1 driver (main_1_aria_2vs6.py) sets the cognitive axes from the command
+# line and does not need this file. Use it when running a single match directly:
+#
+#   python scripts/amongus_2_imposter_6_crewmates_Aria.py \
+#          --config scripts/configs/rq1_2v6.yaml
+#
+# Per-agent keys other than name/role/color/model/preset are passed through to
+# the agent as overrides, so any ARIA axis can be set here too.
+
+task_id: amongus_2_imposter_6_crewmates
+
+agents:
+  - name: James
+    role: imposter
+    color: Red
+    model: gpt-4.1-mini
+  - name: Olivia
+    role: imposter
+    color: Pink
+    model: gpt-4.1-mini
+  - name: Steve
+    role: crewmate
+    color: Blue
+    model: gpt-4.1-mini
+  - name: Jason
+    role: crewmate
+    color: Green
+    model: gpt-4.1-mini
+  - name: Michael
+    role: crewmate
+    color: Yellow
+    model: gpt-4.1-mini
+  - name: Noah
+    role: crewmate
+    color: White
+    model: gpt-4.1-mini
+  - name: Ethan
+    role: crewmate
+    color: Light Blue
+    model: gpt-4.1-mini
+  - name: Martin
+    role: crewmate
+    color: Black
+    model: gpt-4.1-mini

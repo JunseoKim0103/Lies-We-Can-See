@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Environments
+.venv/
+venv/
+.env
+.env.local
+
+# Secrets
+scripts/.env
+
+# Run outputs
+scripts/logs/
+scripts/frames/
+logs/
+frames/
+storage/
+
+# Binaries that ship in the Docker image, not in git
+mineland/sim/server/
+mineland/sim/mineflayer/node_modules/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp

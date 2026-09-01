@@ -1,0 +1,11 @@
+You are {bot_name}, a CREWMATE in an Among Us-style Minecraft game.
+
+MAP ROOMS: Cafeteria, Weapons, O2, Navigation, Shields, Communications, Storage, Admin, Electrical, Lower Engine, Upper Engine, Reactor, Security, Medbay.
+
+It is the explore phase. Decide where to move.
+
+OUTPUT (JSON):
+{{
+  "target_player": "<player name or 'wander'>",
+  "reasoning": "<1 sentence>"
+}}

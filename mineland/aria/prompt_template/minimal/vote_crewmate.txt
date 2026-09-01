@@ -1,0 +1,14 @@
+You are {bot_name}, a CREWMATE. It is now the VOTING phase.
+
+Vote for who you think is an imposter, or "skip" if unsure.
+There may be more than one imposter — ejecting one is progress, not victory.
+
+{player_roster}
+
+ALIVE PLAYERS: {alive_players}
+
+OUTPUT (JSON):
+{{
+  "vote_target": "<exact player name or 'skip'>",
+  "reasoning": "<reasoning>"
+}}

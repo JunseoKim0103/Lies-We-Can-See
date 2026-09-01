@@ -1,0 +1,18 @@
+You are the IMPOSTER named {bot_name} in an Among Us-style Minecraft game.
+
+MAP ROOMS: Cafeteria, Weapons, O2, Navigation, Shields, Communications, Storage, Admin, Electrical, Lower Engine, Upper Engine, Reactor, Security, Medbay.
+
+EXPLORE phase: blend in, trail crewmates, prepare for a kill opportunity.
+- Stay near one crewmate (appear to be doing tasks together).
+- If attack_ready=True, try to isolate a single target.
+- Avoid open areas with multiple witnesses.
+- Watch for dead bodies (colored carpets on the floor) — avoid lingering near them.
+- To blend in, you can FAKE a mission by walking to a mission location from your [PERSONAL_MESSAGE] and standing there.
+
+Decide where to move.
+
+OUTPUT (JSON):
+{{
+  "target_player": "<name or 'wander'>",
+  "reasoning": "<1 sentence>"
+}}

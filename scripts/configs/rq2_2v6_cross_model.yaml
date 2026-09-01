@@ -1,0 +1,47 @@
+# RQ2 — cross-VLM matchup: both imposters on one backbone, all six crewmates on
+# another. This is the shape the RQ2 driver generates for each cell of the
+# round-robin; edit the two model names to run a single matchup by hand.
+#
+#   python scripts/amongus_2_imposter_6_crewmates_Aria.py \
+#          --config scripts/configs/rq2_2v6_cross_model.yaml
+#
+# The driver (main_1_aria_2vs6_multi_llm.py) writes an equivalent agents.yaml
+# per game, so you do not need this file for a full sweep.
+
+task_id: amongus_2_imposter_6_crewmates
+
+agents:
+  # imposters
+  - name: James
+    role: imposter
+    color: Red
+    model: qwen/qwen3.6-27b
+  - name: Olivia
+    role: imposter
+    color: Pink
+    model: qwen/qwen3.6-27b
+  # crewmates
+  - name: Steve
+    role: crewmate
+    color: Blue
+    model: gpt-4.1-mini
+  - name: Jason
+    role: crewmate
+    color: Green
+    model: gpt-4.1-mini
+  - name: Michael
+    role: crewmate
+    color: Yellow
+    model: gpt-4.1-mini
+  - name: Noah
+    role: crewmate
+    color: White
+    model: gpt-4.1-mini
+  - name: Ethan
+    role: crewmate
+    color: Light Blue
+    model: gpt-4.1-mini
+  - name: Martin
+    role: crewmate
+    color: Black
+    model: gpt-4.1-mini
