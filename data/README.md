@@ -1,6 +1,6 @@
 # 📦 `data/`
 
-This repository ships code only. The game logs, judge outputs and human annotations are on the Hugging Face Hub.
+This repository ships code only. The game logs, judge outputs and human annotations are released separately.
 
 > **Dataset:** to be added, released alongside the paper.
 

@@ -112,5 +112,4 @@ you need it elsewhere.
 ## Notes
 
 1. Judging a 2v6 match costs about **$0.05** with `gpt-4.1-mini` (~120 K input tokens) and scales with the log length. `--noise-filter` is the cheapest lever.
-2. Atom descriptions are partly written in Korean, as they were during annotation. They are sent to the judge verbatim, so translating them would change the artifact's behavior.
-3. The agreement figures in the paper (human–human Cohen's κ = 0.792, human–LLM κ = 0.709) were computed against human annotations, which are part of the dataset release rather than this repository. See [`../data/README.md`](../data/README.md).
+2. The agreement figures in the paper (human–human Cohen's κ = 0.792, human–LLM κ = 0.709) were computed against human annotations, which are part of the dataset release rather than this repository. See [`../data/README.md`](../data/README.md).

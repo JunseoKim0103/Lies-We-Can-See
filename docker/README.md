@@ -2,7 +2,7 @@
 
 ## What's in the image
 
-`ghcr.io/junseokim0103/mineamongus:paper` — `linux/amd64`, 7.8 GB unpacked (2.5 GB download).
+`mineamongus:paper` (the image link is withheld for anonymous review) — `linux/amd64`, 7.8 GB unpacked (2.5 GB download).
 
 | | |
 |---|---|
@@ -38,7 +38,7 @@ For a faster loop, bind-mount instead of rebuilding:
 docker run -it --shm-size=4g \
   -v "$(pwd)/scripts:/root/MineLand/scripts" \
   -v "$(pwd)/mineland/aria:/root/MineLand/mineland/aria" \
-  ghcr.io/junseokim0103/mineamongus:paper
+  mineamongus:paper
 ```
 
 ## Troubleshooting

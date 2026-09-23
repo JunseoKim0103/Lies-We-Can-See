@@ -8,9 +8,9 @@
 #   docker build -t mineamongus:dev .
 #   docker run -it --shm-size=4g mineamongus:dev
 #
-# To build on a locally loaded image instead of the published one:
-#   docker build --build-arg BASE=mineamongus:paper -t mineamongus:dev .
-ARG BASE=ghcr.io/junseokim0103/mineamongus:paper
+# BASE defaults to a locally loaded image:
+#   docker build --build-arg BASE=<your-image> -t mineamongus:dev .
+ARG BASE=mineamongus:paper
 FROM ${BASE}
 
 # COPY merges directories, so mineland/sim/server/ and
