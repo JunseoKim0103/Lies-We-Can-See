@@ -16,15 +16,14 @@ Code for the paper **Lies We Can See: Joint Verbal and Non-Verbal Deception by V
 
 The 6 families are Camouflage (NV-1), Pursuit & Kill (NV-2), Report & Emergency (NV-3), Falsification (V-1), Equivocation (V-2), and Concealment (V-3). See [`judge/README.md`](judge/README.md) for the full taxonomy.
 
-The Minecraft server, Among Us world, bot bridge, headless renderer, and Python environment are packaged as a Docker image. The image is withheld during the anonymous review period and will be released with the paper. No Minecraft account is needed.
+The Minecraft server files (`mineland/sim/server/`) and the bot dependencies (`mineland/sim/mineflayer/node_modules/`) are large binaries that are not tracked in this repository; they will be released with the paper. No Minecraft account is needed.
 
 ## Running a match
 
-Inside the Docker image (released after review):
-
 ```bash
 cp scripts/.env.example scripts/.env   # add your OPENAI_API_KEY
-run_2vs6.sh                            # one match, ~15 min, ~$0.25
+python scripts/main_1_aria_2vs6.py --config-ids 8 --runs-per-config 1 \
+       --model gpt-4.1-mini            # one match, ~15 min, ~$0.25
 ```
 
 Results land in `scripts/logs/sweep/<timestamp>/`: `summary.md` for the table, `game.log` for the full transcript.
@@ -60,8 +59,7 @@ mineamongus/
 ├── judge/                        # LLM-as-a-Judge, 23-atom codebook   judge/README.md
 │   ├── codebook.py               #   the 23 atoms + the prompt text built from them
 │   └── judge.py                  #   score a log, or a directory of logs
-├── data/                         # how to reproduce a result          data/README.md
-└── docker/                       # image, entrypoint, rebuilding      docker/README.md
+└── data/                         # how to reproduce a result          data/README.md
 ```
 
 ## Intended use
@@ -70,7 +68,7 @@ This repository is for research on agent deception and alignment. The deceptive 
 
 ## Notes
 
-1. Run **one** sweep per container. Two concurrent runners collide on the Minecraft world and port 25565.
+1. Run **one** sweep per `--server-id`. Two concurrent runners on the same one collide on the Minecraft world and port 25565.
 2. Built on MineLand; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 3. Minecraft is a trademark of Mojang Studios; this is an independent research artifact.
 

@@ -22,7 +22,7 @@ logs/
 frames/
 storage/
 
-# Binaries that ship in the Docker image, not in git
+# Large binaries, not tracked in git
 mineland/sim/server/
 mineland/sim/mineflayer/node_modules/
 

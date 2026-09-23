@@ -625,7 +625,7 @@ def main():
                          "case<case>/trial<N>/. Default: auto (next unused trial for this "
                          "case, so a 2nd run becomes trial2 and never overwrites trial1). "
                          "Concurrent lanes (--num-servers>1) must pass an explicit --trial so "
-                         "they share one trial dir; run_multi_llm_one_docker.sh sets it.")
+                         "they share one trial dir; the launcher sets it.")
     ap.add_argument("--max-steps", type=int, default=None,
                     help="Override per-game max steps (default from COMMON_CLI = 200). "
                          "Handy for quick smoke tests, e.g. --max-steps 30.")
@@ -743,7 +743,7 @@ def main():
         if args.num_servers > 1:
             # Lanes that SHARE one out_dir must agree on the trial number; each
             # auto-picking independently could race to different trials. The
-            # launcher (run_multi_llm_one_docker.sh) computes it once and passes an
+            # launcher computes it once and passes an
             # explicit --trial. Separate-machine splits (run_main_split.sh) use a
             # distinct --out-dir per server, so per-process auto-pick is fine there.
             print(f"[warn] --num-servers>1 without --trial: auto-picked trial{trial_num}. "

@@ -16,7 +16,7 @@ All Among Us mechanics are enforced **server-side** by datapacks (`sim/server/`)
 
 The world used by the 2 vs 6 experiments is `amongus_2im`; other templates in `sim/server/` are alternate layouts. `tasks/` holds only the Among Us task registry: the upstream MineLand task families (survival, harvest, combat and so on) have been removed.
 
-> `sim/server/` and `sim/mineflayer/node_modules/` are large binaries and are **not tracked in git**. They ship inside the Docker image, which is withheld during the anonymous review period.
+> `sim/server/` and `sim/mineflayer/node_modules/` are large binaries and are **not tracked in git**. They will be released with the paper.
 
 ## ARIA (`aria/`)
 

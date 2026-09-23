@@ -16,20 +16,13 @@ Both drivers shell out to the 2 vs 6 match runner, once per game.
 ## RQ1: harness ablation
 
 ```bash
-run_2vs6.sh --config-ids 8-23 --runs-per-config 3 --model gpt-4.1-mini \
-            --out-dir scripts/logs/sweep/rq1_gpt
-```
-
-`run_2vs6.sh` (on `PATH` in the image) wraps the driver; calling it directly is equivalent:
-
-```bash
 python scripts/main_1_aria_2vs6.py --config-ids 8,9,10 --runs-per-config 3 \
        --model gpt-4.1-mini --out-dir scripts/logs/sweep/rq1_gpt
 ```
 
 | Flag | Meaning |
 |---|---|
-| `--config-ids` | Configurations to run. The wrapper accepts ranges (`8-23`); the driver takes a comma list. |
+| `--config-ids` | Configurations to run, as a comma-separated list |
 | `--runs-per-config` | Repetitions per configuration (default 3) |
 | `--model` | Backbone for **all** agents (self-play) |
 | `--imposter-model` | Overrides the backbone for the imposters only |
@@ -92,7 +85,7 @@ Per-model win rates are compared with Pearson correlation (Fisher *z* confidence
 
 `game.log` is what the [judge pipeline](../judge/README.md) consumes.
 
-> Run **one** driver per container. Two concurrent drivers collide on the Minecraft world and port 25565 and die silently with exit `-9`. For parallelism, give each a distinct `--server-id`, or use separate containers.
+> Run **one** driver per `--server-id`. Two concurrent drivers on the same one collide on the Minecraft world and port 25565 and die silently with exit `-9`. For parallelism, give each a distinct `--server-id`.
 
 ## Supporting files
 

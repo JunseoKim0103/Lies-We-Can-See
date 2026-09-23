@@ -8,8 +8,8 @@ This repository ships code only. The game logs, judge outputs and human annotati
 
 ```bash
 # 1. play matches
-run_2vs6.sh --config-ids 8-23 --runs-per-config 3 --model gpt-4.1-mini \
-            --out-dir scripts/logs/sweep/mine
+python scripts/main_1_aria_2vs6.py --config-ids 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 \
+       --runs-per-config 3 --model gpt-4.1-mini --out-dir scripts/logs/sweep/mine
 
 # 2. score the deception atoms
 python judge/judge.py --sweep-dir scripts/logs/sweep/mine --two-pass --model gpt-5.4
