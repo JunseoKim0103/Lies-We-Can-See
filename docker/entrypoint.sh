@@ -8,6 +8,9 @@ export DISPLAY=${DISPLAY:-:1}
 export PATH=/root/anaconda3/envs/mineland/bin:/root/.nvm/versions/node/v18.18.2/bin:$PATH
 
 if ! pgrep -x Xvfb >/dev/null 2>&1; then
+    # A stale lock left in an image layer makes Xvfb exit with
+    # "Server is already active for display"; clear it before starting.
+    rm -f "/tmp/.X${DISPLAY#:}-lock" "/tmp/.X11-unix/X${DISPLAY#:}"
     Xvfb "$DISPLAY" -screen 0 1024x768x24 </dev/null >/var/log/xvfb.log 2>&1 &
     for _ in $(seq 1 20); do
         pgrep -x Xvfb >/dev/null 2>&1 && break
