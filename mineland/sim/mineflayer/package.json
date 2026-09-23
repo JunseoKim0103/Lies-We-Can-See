@@ -11,7 +11,7 @@
     "mineflayer-pathfinder": "^2.4.5",
     "mineflayer-pvp": "^1.3.2",
     "mineflayer-tool": "^1.2.0",
-    "prismarine-viewer-colalab": "github:anonymous/prismarine-viewer-colalab",
+    "prismarine-viewer-colalab": "^1.0.11",
     "vec3": "^0.1.8"
   }
 }
