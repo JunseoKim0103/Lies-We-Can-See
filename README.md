@@ -16,16 +16,13 @@ Code for the paper **Lies We Can See: Joint Verbal and Non-Verbal Deception by V
 
 The 6 families are Camouflage (NV-1), Pursuit & Kill (NV-2), Report & Emergency (NV-3), Falsification (V-1), Equivocation (V-2), and Concealment (V-3). See [`judge/README.md`](judge/README.md) for the full taxonomy.
 
-The Docker image ships the Minecraft server, Among Us world, bot bridge, headless renderer, and Python environment. No Minecraft account is needed.
+The Minecraft server, Among Us world, bot bridge, headless renderer, and Python environment are packaged as a Docker image. The image is withheld during the anonymous review period and will be released with the paper. No Minecraft account is needed.
 
 ## Running a match
 
-```bash
-docker run -it --shm-size=4g mineamongus:paper
-```
+Inside the Docker image (released after review):
 
 ```bash
-# inside the container
 cp scripts/.env.example scripts/.env   # add your OPENAI_API_KEY
 run_2vs6.sh                            # one match, ~15 min, ~$0.25
 ```
