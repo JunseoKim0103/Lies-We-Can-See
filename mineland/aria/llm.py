@@ -49,37 +49,17 @@ class ModelConfig:
 
 MODEL_CONFIGS: Dict[str, ModelConfig] = {
     # OpenAI
-    "gpt-4.1-nano": ModelConfig("gpt-4.1-nano", "openai", True, 0.1, 0.10, 0.40, mask_score=61.40, casi_score=54.05),
     "gpt-4.1-mini": ModelConfig("gpt-4.1-mini", "openai", True, 0.1, 0.40, 1.60, mask_score=50.00),
-    "gpt-4.1": ModelConfig("gpt-4.1", "openai", True, 0.1, 2.00, 8.00, mask_score=51.13),
-    "gpt-5-nano": ModelConfig("gpt-5-nano", "openai", True, 1.0, 0.05, 0.40, temperature_fixed=1.0, is_reasoning=True),
     "gpt-5-mini": ModelConfig("gpt-5-mini", "openai", True, 1.0, 0.25, 2.00, temperature_fixed=1.0, mask_score=82.60, ars_score=90.08, casi_score=85.80, is_reasoning=True),
     "gpt-5": ModelConfig("gpt-5", "openai", True, 1.0, 1.25, 10.00, temperature_fixed=1.0, mask_score=79.33, ars_score=81.88, casi_score=81.98, is_reasoning=True),
-    "gpt-5.4-nano": ModelConfig("gpt-5.4-nano", "openai", True, 1.0, 0.20, 1.25, temperature_fixed=1.0, is_reasoning=True),
-    "gpt-5.4-mini": ModelConfig("gpt-5.4-mini", "openai", True, 1.0, 0.75, 4.50, temperature_fixed=1.0, is_reasoning=True),
     "gpt-5.4": ModelConfig("gpt-5.4", "openai", True, 1.0, 2.50, 15.00, temperature_fixed=1.0, is_reasoning=True),
-    "gpt-5.1": ModelConfig("gpt-5.1", "openai", True, 1.0, 2.00, 8.00, temperature_fixed=1.0, is_reasoning=True),
 
     # Gemini via OpenRouter
-    "gemini-2.5-flash-lite": ModelConfig("google/gemini-2.5-flash-lite", "openrouter", True, 0.1, 0.10, 0.40, "google/gemini-2.5-flash-lite"),
     "gemini-2.5-flash": ModelConfig("google/gemini-2.5-flash", "openrouter", True, 0.1, 0.30, 2.50, "google/gemini-2.5-flash", mask_score=49.13),
-    "gemini-2.5-pro": ModelConfig("google/gemini-2.5-pro", "openrouter", True, 0.1, 1.25, 10.00, "google/gemini-2.5-pro", mask_score=53.07),
     "gemini-3.1-flash-lite-preview": ModelConfig("google/gemini-3.1-flash-lite-preview", "openrouter", True, 0.1, 0.25, 1.50, "google/gemini-3.1-flash-lite-preview", mask_score=48.40),
     "gemini-3-flash-preview": ModelConfig("google/gemini-3-flash-preview", "openrouter", True, 0.1, None, None, "google/gemini-3-flash-preview"),
-    "gemini-3.1-pro-preview": ModelConfig("google/gemini-3.1-pro-preview", "openrouter", True, 0.1, 2.00, 12.00, "google/gemini-3.1-pro-preview", mask_score=42.40),
 
-    # Qwen aliases used by the requested sweep. OpenRouter is the default for
-    # these aliases; legacy hyphenated local names are kept below.
-    "qwen3.5-4b": ModelConfig("Qwen/Qwen3.5-4B", "openrouter", True, 0.7, api_base_env="QWEN35_4B_API_BASE"),
-    "detection-rq2-0610": ModelConfig("detection-rq2-0610", "openrouter", True, 0.7, api_base_env="DETECTION_RQ2_API_BASE"),
-    "detection-vote-0610": ModelConfig("detection-vote-0610", "openrouter", True, 0.7, api_base_env="DETECTION_VOTE_API_BASE"),
-    "detection-votex1": ModelConfig("detection-votex1", "openrouter", True, 0.7, api_base_env="DETECTION_VOTEX1_API_BASE"),
-    "detection-voteonly": ModelConfig("detection-voteonly", "openrouter", True, 0.7, api_base_env="DETECTION_VOTEONLY_API_BASE"),
-    "detection-voteout": ModelConfig("detection-voteout", "openrouter", True, 0.7, api_base_env="DETECTION_VOTEOUT_API_BASE"),
-    "detection-winvoteout": ModelConfig("detection-winvoteout", "openrouter", True, 0.7, api_base_env="DETECTION_WINVOTEOUT_API_BASE"),
-    "detection-nowrongvote": ModelConfig("detection-nowrongvote", "openrouter", True, 0.7, api_base_env="DETECTION_NOWRONGVOTE_API_BASE"),
-    "detection-voteshufx1": ModelConfig("detection-voteshufx1", "openrouter", True, 0.7, api_base_env="DETECTION_VOTESHUFX1_API_BASE"),
-    "detection-voteshuf": ModelConfig("detection-voteshuf", "openrouter", True, 0.7, api_base_env="DETECTION_VOTESHUF_API_BASE"),
+    # Qwen via OpenRouter.
     "qwen3.5-9b": ModelConfig("qwen/qwen3.5-9b", "openrouter", True, 0.7, 0.04, 0.15, "qwen/qwen3.5-9b"),
     "qwen3.5-27b": ModelConfig("qwen/qwen3.5-27b", "openrouter", True, 0.7, 0.195, 1.56, "qwen/qwen3.5-27b"),
     "qwen3.6-27b": ModelConfig("qwen/qwen3.6-27b", "openrouter", True, 0.7, 0.32, 3.20, "qwen/qwen3.6-27b"),
@@ -91,32 +71,18 @@ MODEL_CONFIGS: Dict[str, ModelConfig] = {
     "kimi-k2.5-thinking": ModelConfig("moonshotai/kimi-k2.5", "openrouter", True, 0.1, 0.40, 1.90, "moonshotai/kimi-k2.5", is_reasoning=True),
     "glm-5.2": ModelConfig("z-ai/glm-5.2", "openrouter", False, 0.7, 0.35, 1.10, "z-ai/glm-5.2", is_reasoning=True),
 
-    # Legacy local vLLM names
+    # Local vLLM name (RQ1). Served from QWEN36_27B_API_BASE, or via
+    # OpenRouter when OPENROUTER_API_KEY is set.
     "qwen-3.6-27b": ModelConfig("Qwen/Qwen3.6-27B", "qwen", True, 0.7, 0.32, 3.20),
-    "qwen-3.6-27b-thinking": ModelConfig("Qwen/Qwen3.6-27B", "qwen", True, 0.7, 0.32, 3.20, is_reasoning=True),
 
-    # Gemma and Kimi via OpenRouter, plus legacy local Gemma alias.
+    # Gemma and Kimi via OpenRouter.
     # DeepInfra routes paid gemma-4-31b-it to a `-turbo` variant that rejects
     # image input (Aria's VLM modules send screenshots). Blacklist DeepInfra so
     # OpenRouter falls back to a multimodal-capable provider.
     "gemma4-31b": ModelConfig("google/gemma-4-31b-it", "openrouter", True, 0.7, 0.12, 0.37, "google/gemma-4-31b-it", openrouter_provider_ignore=["DeepInfra"]),
-    "gemma-4-31b": ModelConfig("google/gemma-4-31B-it", "gemma", True, 0.7, 0.12, 0.37),
     "kimi-k2.5": ModelConfig("moonshotai/kimi-k2.5", "openrouter", True, 0.1, 0.40, 1.90, "moonshotai/kimi-k2.5", mask_score=70.47),
 
-    # Gemma 3 via OpenRouter (added 2026-05-18). pricing needs confirmation
-    # for 12b/27b — verify slug + price before billing-sensitive runs.
-    "gemma3-4b": ModelConfig("google/gemma-3-4b-it", "openrouter", True, 0.7, 0.0, 0.0, "google/gemma-3-4b-it"),
-    "gemma3-12b": ModelConfig("google/gemma-3-12b-it", "openrouter", True, 0.7, 0.04, 0.13, "google/gemma-3-12b-it"),
-    "gemma3-27b": ModelConfig("google/gemma-3-27b-it", "openrouter", True, 0.7, 0.08, 0.16, "google/gemma-3-27b-it"),
-
-    # NVIDIA Nemotron Nano Omni (vision+audio+text, reasoning variant, free tier).
-    # is_reasoning=False so aria/llm.py sends reasoning.enabled=False at API level
-    # — the reasoning variant should respect the toggle. Audio modality is OFF by
-    # default (only sent if msg has audio content or modalities=['audio']).
-    "nemotron-3-nano-omni-30b-a3b": ModelConfig("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "openrouter", True, 0.1, 0.0, 0.0, "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"),
-
-    # Gemma 4 26B A4B (4B active params MoE, OpenRouter). Slug guess — verify
-    # on OR page if 404.
+    # Gemma 4 26B A4B (4B active params MoE, OpenRouter).
     "gemma4-26b-a4b": ModelConfig("google/gemma-4-26b-a4b-it", "openrouter", True, 0.7, None, None, "google/gemma-4-26b-a4b-it"),
 
     # ── RQ2 model-pool extension (12 -> 14 models) ─────────────────────
@@ -173,26 +139,11 @@ def _find_model_config(model_name: str) -> Optional[ModelConfig]:
     return None
 
 
-# ── Default server URLs (round-robin) ──────────────────────────────────
-# LIVE as of 2026-05-11:
-#   Qwen3.6-27B : localhost:8000, localhost:8000, localhost:9000, localhost:8001,
-#                 localhost:8003, localhost:7000, localhost:9000, localhost:8002
-#   Gemma-4-31B : localhost:8000
-
-DEFAULT_QWEN36_URLS = [
-    "http://localhost:8000/v1",
-    "http://localhost:8000/v1",
-    "http://localhost:9000/v1",
-    "http://localhost:8001/v1",
-    "http://localhost:8003/v1",
-    "http://localhost:7000/v1",
-    "http://localhost:9000/v1",
-    "http://localhost:8002/v1",
-]
-
-DEFAULT_GEMMA4_URLS = [
-    "http://localhost:8000/v1",
-]
+# ── Local vLLM servers ─────────────────────────────────────────────────
+# No defaults: point these at your own servers (comma-separated for
+# round-robin), e.g. QWEN36_27B_API_BASE=http://localhost:8000/v1
+DEFAULT_QWEN36_URLS: List[str] = []
+DEFAULT_GEMMA4_URLS: List[str] = []
 
 # Floor on max_tokens for models marked is_reasoning=True. Hidden reasoning
 # tokens (effort=low can still burn 500-1500) must not starve the visible-
@@ -234,11 +185,14 @@ def _select_url(urls: List[str]) -> str:
     return urls[idx]
 
 
-def _parse_multi_urls(env_value: str, defaults: List[str]) -> List[str]:
-    if not env_value:
-        return defaults
-    urls = [u.strip() for u in env_value.split(",") if u.strip()]
-    return urls or defaults
+def _parse_multi_urls(env_value: str, defaults: List[str], env_name: str = "") -> List[str]:
+    urls = [u.strip() for u in (env_value or "").split(",") if u.strip()] or defaults
+    if not urls:
+        raise ValueError(
+            f"No local server configured. Set {env_name or 'the API_BASE env var'} "
+            f"to your vLLM endpoint(s), e.g. http://localhost:8000/v1"
+        )
+    return urls
 
 
 # ── Token tracker ──────────────────────────────────────────────────────
@@ -532,7 +486,7 @@ def create_chat_openai(
             actual_name = f"qwen/qwen{suffix}"
         else:
             urls = _parse_multi_urls(
-                os.getenv("QWEN36_27B_API_BASE", ""), DEFAULT_QWEN36_URLS
+                os.getenv("QWEN36_27B_API_BASE", ""), DEFAULT_QWEN36_URLS, "QWEN36_27B_API_BASE"
             )
             api_key = os.getenv("QWEN_API_KEY") or os.getenv("DASHSCOPE_API_KEY") or "EMPTY"
             kwargs.setdefault("api_key", api_key)
@@ -591,7 +545,7 @@ def create_chat_openai(
     # ── Gemma (vLLM) ───────────────────────────────────────────────
     if _is_gemma(model_name) or (cfg and cfg.provider == "gemma"):
         urls = _parse_multi_urls(
-            os.getenv("GEMMA4_27B_API_BASE", ""), DEFAULT_GEMMA4_URLS
+            os.getenv("GEMMA4_27B_API_BASE", ""), DEFAULT_GEMMA4_URLS, "GEMMA4_27B_API_BASE"
         )
         api_key = os.getenv("GEMMA_API_KEY") or "EMPTY"
         kwargs.setdefault("api_key", api_key)
