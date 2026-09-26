@@ -19,8 +19,9 @@ def print_error(*args, end='\n'):
     text = [red_text(str(arg)) for arg in args]
     std_print("[Server Error]", *text, end=end)
 
-# TODO: 多线程管理！ServerManager和MineflayerManager都需要多线程管理！
-#       特别是 is_running 和 is_runtick_finished 这两个变量，如果数据不一致的话，会导致整个服务器卡死！
+# TODO: thread-safety. ServerManager and MineflayerManager both need proper
+#       multithreaded state management, especially `is_running` and
+#       `is_runtick_finished`: if they get out of sync the whole server hangs.
 
 class ServerManager:
     def __init__(

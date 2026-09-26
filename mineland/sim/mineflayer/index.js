@@ -90,7 +90,7 @@ app.post("/step_pre", (req, res) => {
             // TODO
             // 1. iterate action[0..7]
             let actionList = JSON.parse(req.body.action[i]);
-            //转成list
+            // convert to a list
 
             bot_manager.runLowLevelActionByOrder(i, actionList)
             // 2. execute actions in action[i]

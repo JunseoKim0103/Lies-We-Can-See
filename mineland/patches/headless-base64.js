@@ -57,7 +57,7 @@ module.exports = (bot, views, { viewDistance = 6, interval = 250, width = 256, h
     const base64Image = base64String.split(';base64,').pop();
     const imageBuffer = Buffer.from(base64Image, 'base64');
     fs.writeFile(filename, imageBuffer, {encoding: 'base64'}, function(err) {
-      if (err) { console.error(err); } else { console.log('文件保存成功'); }
+      if (err) { console.error(err); } else { console.log('File saved'); }
     });
   }
 

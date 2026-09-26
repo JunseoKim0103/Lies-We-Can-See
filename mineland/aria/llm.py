@@ -42,6 +42,10 @@ class ModelConfig:
     # Example: ['DeepInfra'] to avoid DeepInfra's vision-less `-turbo` variant
     # of gemma-4-31b-it. Only used when provider='openrouter'.
     openrouter_provider_ignore: Optional[List[str]] = None
+    # Default reasoning_effort for the direct-OpenAI branch. The branch falls
+    # back to "minimal", but not every reasoning model accepts that value —
+    # gpt-6-astra only takes low/medium/high/xhigh — so set it per model.
+    reasoning_effort: Optional[str] = None
 
 MODEL_CONFIGS: Dict[str, ModelConfig] = {
     # OpenAI
@@ -114,6 +118,42 @@ MODEL_CONFIGS: Dict[str, ModelConfig] = {
     # Gemma 4 26B A4B (4B active params MoE, OpenRouter). Slug guess — verify
     # on OR page if 404.
     "gemma4-26b-a4b": ModelConfig("google/gemma-4-26b-a4b-it", "openrouter", True, 0.7, None, None, "google/gemma-4-26b-a4b-it"),
+
+    # ── RQ2 model-pool extension (12 -> 14 models) ─────────────────────
+    # GPT-6 Astra on the DIRECT OpenAI API (not OpenRouter). provider="openai"
+    # plus the widened _is_openai_reasoning() predicate routes it down the same
+    # branch gpt-5.x uses: reasoning_effort + max_completion_tokens floor +
+    # temperature pinned to 1.0.
+    #
+    # Reasoning cannot be switched off for this model; every disable variant
+    # returns 400 "Reasoning is mandatory for this endpoint and cannot be
+    # disabled." The direct API also rejects "minimal":
+    #   400 "reasoning_effort does not support 'minimal' with this model.
+    #        Supported values are: 'low', 'medium', 'high', and 'xhigh'."
+    # So this entry pins reasoning_effort="low", the lowest the direct API
+    # takes. Measured: low burns 0 reasoning tokens on a belief-shaped prompt,
+    # i.e. the same effective setting as gpt-5 / gpt-5-mini at minimal.
+    #
+    # The branch sends `model=<alias>`, so this key must equal OpenAI's model id.
+    # Price: $10/M in, $50/M out; $20/$75 above 272k prompt tokens.
+    "gpt-6-astra": ModelConfig("gpt-6-astra", "openai", True, 1.0, 10.00, 50.00, temperature_fixed=1.0, is_reasoning=True, reasoning_effort="low"),
+
+    # Muse Spark 1.3 (Meta). Multimodal text+image+video+audio; Aria only ever
+    # sends text+image.
+    # is_reasoning MUST stay True. Like gpt-6-astra, this endpoint refuses to
+    # run without reasoning (400 "Reasoning is mandatory ..."). is_reasoning=True
+    # sends effort=minimal + exclude=True and restores the 32768 completion floor.
+    # Unlike gpt-6-astra (0 reasoning tokens at minimal), this model always
+    # thinks. Measured on one belief-shaped prompt:
+    #   effort=minimal -> 239 reasoning tok of 288 completion (~83% hidden)
+    #   effort=low     -> 454 of 504
+    #   effort=medium  -> 636 of 685
+    # minimal IS the floor: effort="none" / reasoning.enabled=False -> 400, and
+    # reasoning.max_tokens=N is not honoured (it used more reasoning tokens than
+    # effort=minimal). Output stayed valid JSON of the same length in every
+    # variant.
+    # Price: $1.25/M in, $4.25/M out.
+    "muse-spark-1.3": ModelConfig("meta/muse-spark-1.3", "openrouter", True, 0.1, 1.25, 4.25, "meta/muse-spark-1.3", is_reasoning=True),
 }
 
 def get_model_config(model_name: str) -> Optional[ModelConfig]:
@@ -339,8 +379,18 @@ def _is_qwen(name: str) -> bool:
 def _is_gemma(name: str) -> bool:
     return str(name).startswith("gemma-")
 
-def _is_gpt5(name: str) -> bool:
-    return str(name).startswith("gpt-5")
+def _is_openai_reasoning(name: str) -> bool:
+    """OpenAI reasoning families served on the direct API (gpt-5*, gpt-6*).
+
+    They share one contract: reasoning_effort, max_completion_tokens instead of
+    max_tokens, and temperature fixed at 1.0.
+    """
+    n = str(name)
+    return n.startswith("gpt-5") or n.startswith("gpt-6")
+
+
+# Back-compat alias; the predicate covered only gpt-5 before the pool extension.
+_is_gpt5 = _is_openai_reasoning
 
 def _is_openrouter(name: str, cfg: Optional[ModelConfig]) -> bool:
     return bool(cfg and cfg.provider == "openrouter")
@@ -567,14 +617,19 @@ def create_chat_openai(
         _inject_token_tracker(init)
         return ChatOpenAI(**init)
 
-    # ── GPT-5 ──────────────────────────────────────────────────────
-    if _is_gpt5(model_name):
+    # ── OpenAI reasoning models: gpt-5*, gpt-6* ────────────────────
+    if _is_openai_reasoning(model_name):
         effort = (
             reasoning_effort
             or merged_model_kwargs.get("reasoning_effort")
             or os.getenv("MINELAND_REASONING_EFFORT")
+            or (cfg.reasoning_effort if cfg else None)
             or "minimal"
         )
+        # NOTE: MINELAND_REASONING_EFFORT outranks the per-model value, so
+        # setting it to "minimal" globally will 400 on models that reject that
+        # level (gpt-6-astra). Leave it unset unless every model in play
+        # accepts the value.
         merged_model_kwargs.setdefault("reasoning_effort", effort)
         # GPT-5 family is always reasoning; apply floor even when caller didn't
         # pass max_tokens (otherwise reasoning can exhaust the default budget

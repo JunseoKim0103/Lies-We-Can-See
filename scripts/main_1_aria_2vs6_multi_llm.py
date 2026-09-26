@@ -76,7 +76,14 @@ CHARACTERS = [
     {"name": "Martin",  "role": "crewmate", "color": "Black"},
 ]
 
-# 12-model pool → 144 matchups per case.
+# 14-model pool → 196 matchups per case.
+# The pool grew 12 → 14 (gpt-6-astra, muse-spark-1.3) after the first sweep.
+# Matchup index is k = i * N + j, so N=12 → N=14 RENUMBERS every index:
+# a matchup<NN> dir written under the old 12-model numbering does NOT mean
+# the same pair now. Existing trials stay readable (analyze() takes models
+# from each run's agents.yaml, and the manifest records model_pool), but run
+# the new matchups into a FRESH --trial / --out-dir so the two numberings
+# never share a directory.
 # Excluded (2026-05-18/19):
 #   - gemini-2.5-flash-lite: JSON parser fail in imposter/ghost prompts
 #   - gemma3-4b/12b/27b: EmergencyModule false-positive + rate limits
@@ -95,8 +102,36 @@ MODEL_POOL = [
     "gemini-3-flash-preview",
     "gemma4-26b-a4b",
     "gemma4-31b",
+    # Appended at the END so the first 12 keep their order.
+    "gpt-6-astra",
+    "muse-spark-1.3",
 ]
 assert len(MODEL_POOL) == len(set(MODEL_POOL)), "MODEL_POOL must be unique"
+
+# Models added after the original 144-matchup sweep. Only matchups where one
+# side is a NEW model still need running: 14*14 - 12*12 = 52 per case.
+#   python main_1_aria_2vs6_multi_llm.py --case 1A --trial <fresh N> \
+#       --matchup-indices "$(python main_1_aria_2vs6_multi_llm.py --new-indices)"
+NEW_MODELS = ["gpt-6-astra", "muse-spark-1.3"]
+
+
+def new_model_matchup_indices(only: str | None = None) -> list[int]:
+    """Indices (under the current N=14 numbering) of every matchup involving a
+    model in NEW_MODELS — i.e. exactly the ones the 12-model sweep never ran.
+
+    With `only`, narrow to matchups involving that one new model and none of the
+    others, so a single new model can be swept on its own. The two subsets are
+    disjoint apart from the new-vs-new pairs, which belong to neither.
+    """
+    new = set(NEW_MODELS)
+    if only is not None:
+        if only not in new:
+            raise ValueError(f"{only!r} is not in NEW_MODELS {NEW_MODELS}")
+        others = new - {only}
+        return [k for k, (imp, crew) in enumerate(enumerate_matchups())
+                if only in (imp, crew) and not (others & {imp, crew})]
+    return [k for k, (imp, crew) in enumerate(enumerate_matchups())
+            if imp in new or crew in new]
 
 
 # ──────────────────────────────────────────────────────────────
@@ -636,10 +671,34 @@ def main():
     ap.add_argument("--analyze-only", action="store_true")
     ap.add_argument("--list", dest="list_matchups", action="store_true",
                     help="List all matchups and exit.")
+    ap.add_argument("--allow-rerun", dest="allow_rerun", action="store_true",
+                    help="Permit --matchup-indices to add games to matchup dirs that "
+                         "already contain one. Off by default so existing results are "
+                         "never written beside.")
+    ap.add_argument("--ignore-pool-mismatch", dest="ignore_pool_mismatch",
+                    action="store_true",
+                    help="Permit writing into a trial dir whose manifest records a "
+                         "different MODEL_POOL. Off by default: matchup<NN> numbering "
+                         "is pool-dependent, so mixing pools mislabels directories.")
+    ap.add_argument("--new-indices-model", dest="new_indices_model", default=None,
+                    help="Narrow --new-indices to matchups involving just this one "
+                         "NEW_MODELS entry (and none of the other new models).")
+    ap.add_argument("--new-indices", dest="new_indices", action="store_true",
+                    help="Print the comma-separated matchup indices involving a "
+                         "NEW_MODELS entry (the ones the pre-expansion sweep never "
+                         "ran) and exit. Feed straight into --matchup-indices.")
     args = ap.parse_args()
 
     if args.list_matchups:
         print_all_matchups()
+        return
+
+    if args.new_indices:
+        try:
+            ks = new_model_matchup_indices(args.new_indices_model)
+        except ValueError as e:
+            sys.exit(str(e))
+        print(",".join(str(k) for k in ks))
         return
 
     if args.analyze_only:
@@ -760,6 +819,35 @@ def main():
     if args.num_servers == 1 and not args.matchup_indices and any(trial_dir.glob("matchup*/*/game.log")):
         sys.exit(f"{trial_dir} already contains games — refusing to overwrite. "
                  f"Omit --trial to auto-increment, or pass an unused --trial N.")
+
+    # matchup<NN> dir names are index-based (k = i*N + j), so the SAME name means
+    # a DIFFERENT pair once N changes. Without these guards, an expanded-pool run
+    # can silently deposit games next to ones recorded under the old numbering.
+    if not args.ignore_pool_mismatch:
+        for mf in sorted(trial_dir.glob("manifest*.json")):
+            try:
+                prev_pool = json.loads(mf.read_text()).get("model_pool")
+            except Exception:
+                continue
+            if prev_pool and prev_pool != MODEL_POOL:
+                sys.exit(
+                    f"{mf} was written with a different MODEL_POOL "
+                    f"({len(prev_pool)} models, now {len(MODEL_POOL)}). matchup<NN> "
+                    f"numbering depends on the pool, so reusing this trial dir would "
+                    f"mix two numbering schemes. Use a fresh --trial or --out-dir "
+                    f"(or --ignore-pool-mismatch if that is really what you want)."
+                )
+    # A targeted --matchup-indices run deliberately skips the blanket check above,
+    # so verify none of the matchups it is about to write already holds a game.
+    if args.matchup_indices and not args.allow_rerun:
+        clashes = [k for k in my_idx
+                   if any((trial_dir / f"matchup{k:02d}").glob("*/game.log"))]
+        if clashes:
+            sys.exit(
+                f"{trial_dir} already holds games for matchup(s) "
+                f"{','.join(str(k) for k in clashes)} — refusing to write beside them. "
+                f"Use a fresh --trial or --out-dir (or --allow-rerun to append)."
+            )
     trial_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = {

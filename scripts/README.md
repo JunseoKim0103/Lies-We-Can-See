@@ -56,7 +56,16 @@ Analysis is a cluster paired bootstrap over matched configuration pairs, with pr
 python scripts/main_1_aria_2vs6_multi_llm.py --case 1A --server-id 0 --num-servers 4
 ```
 
-Enumerates every (imposter backbone, crewmate backbone) pair from the 12-model pool: both imposter slots get the same imposter backbone, all six crewmate slots the same crewmate backbone. With 12 models that is 144 matchups per case; the paper runs 4 cases × 2 repetitions = **1,152 matches**.
+Enumerates every (imposter backbone, crewmate backbone) pair from the 14-model pool: both imposter slots get the same imposter backbone, all six crewmate slots the same crewmate backbone. With 14 models that is 196 matchups per case; the paper runs 4 cases × 2 repetitions = **1,568 matches**.
+
+The pool was first swept with 12 models (144 matchups per case); `gpt-6-astra` and `muse-spark-1.3` were appended afterwards (`NEW_MODELS`). Appending renumbers every matchup index, so run only the 52 new matchups per case into a fresh trial:
+
+```bash
+python scripts/main_1_aria_2vs6_multi_llm.py --case 1A --trial 3 \
+       --matchup-indices "$(python scripts/main_1_aria_2vs6_multi_llm.py --new-indices)"
+```
+
+`--new-indices-model <name>` narrows the list to one new model. The driver refuses to write into a trial dir whose manifest records a different pool (`--ignore-pool-mismatch` overrides) or beside existing games in a targeted run (`--allow-rerun` overrides).
 
 | Case | Crewmate configuration | Imposter configuration |
 |---|---|---|
